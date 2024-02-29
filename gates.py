@@ -8,6 +8,27 @@ from qutip.qip.circuit import QubitCircuit
 
 
 
+
+def Xgate():
+    return
+
+
+def Hadamard():
+    return
+
+
+
+def ControlledZ():
+    return
+
+
+def CNOT():
+    return
+
+
+
+
+
 if __name__ == "__main__":
     qc = QubitCircuit(2)
     qc.add_gate("X", targets=0)
