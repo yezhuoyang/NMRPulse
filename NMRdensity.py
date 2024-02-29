@@ -1,39 +1,56 @@
 import numpy as np
 from .Pulses import pulse, pulseSingle, pulseTwo, delayTime
 
+wTMS = 62
+T1p = 10
+T2p = 2
+T2starp = 200
+T1C = 10
+T2C = 2
+T2starC = 50
+wH = 62.3750106999999970
+cfH = 5
+pl90H = 13
+wC = 15.6858599000000010
+cfC = 77
+pl90C = 77
+
 
 class chloroform:
     '''
     Initialize a chloroform instance
     :param
-            T1p: T1 time of proton
-            T2p: T2 time of proton
-            T2starp: T2* time of proton
-            T1C: T1 time of carbon
-            T2C: T2 time of carbon
-            T2starC: T2* time of carbon
-            wH: Lamor frequency of proton
-            cfH: Center frequency of proton
+            wTMS: The TMS frequency, in unit of MHZ
+            T1p: T1 time of proton, in unit of second
+            T2p: T2 time of proton, in unit of second
+            T2starp: T2* time of proton, in unit of ms
+            T1C: T1 time of carbon, in unit of second
+            T2C: T2 time of carbon, in unit of second
+            T2starC: T2* time of carbon, in unit of second
+            wH: Lamor frequency of proton, in unit of MHz
+            cfH: Center frequency of proton, in unit of PPM
             pl90H: The calibrated 90 degree pulse for proton
-            wC: Lamor frequency of carbon
-            cfC: Center frequency of carbon
+            wC: Lamor frequency of carbon, in unit of MHz
+            cfC: Center frequency of carbon, in unit of PPM
             pl90C: The calibrated 90 degree pulse for carbon
     '''
 
     def __init__(self,
-                 T1p,
-                 T2p,
-                 T2starp,
-                 T1C,
-                 T2C,
-                 T2starC,
-                 wH,
-                 cfH,
-                 pl90H,
-                 wC,
-                 cfC,
-                 pl90C,
+                 wTMS=wTMS,
+                 T1p=T1p,
+                 T2p=T2p,
+                 T2starp=T2starp,
+                 T1C=T1C,
+                 T2C=T2C,
+                 T2starC=T2starC,
+                 wH=wH,
+                 cfH=cfH,
+                 pl90H=pl90H,
+                 wC=wC,
+                 cfC=cfC,
+                 pl90C=pl90H,
                  ):
+        self._wTMS = wTMS
         self._density = np.zeros((2, 2), dtype=complex)
         self._density[0][0] = 1
         self._pulses = []

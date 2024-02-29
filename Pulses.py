@@ -13,7 +13,7 @@ class pulseSingle(pulse):
     '''
     Initialize a single pulse instance
     :param:
-          channel: Which channel are you adding the pulse
+          channel: Which channel are you adding the pulse, 0 for +x, 1 for +y, 2 for -x, 3 for -y
           length: The length of the pulse
           freq: The frequency of the pulse
     '''
@@ -39,9 +39,12 @@ class pulseTwo(pulse):
     '''
     Initialize a single pulse instance
     :param:
-          channel: Which channel are you adding the pulse
-          length: The length of the pulse
-          freq: The frequency of the pulse
+          channel1: Which channel are you adding the first pulse, 0 for +x, 1 for +y, 2 for -x, 3 for -y
+          length1: The length of the first pulse
+          freq1: The frequency of the first pulse
+          channel2: Which channel are you adding the second pulse, 0 for +x, 1 for +y, 2 for -x, 3 for -y
+          length2: The length of the second pulse
+          freq2: The frequency of the second pulse
     '''
 
     def __init__(self,
@@ -65,9 +68,7 @@ class delayTime(pulse):
     '''
     Initialize a delay time instance
     :param:
-          channel: Which channel are you adding the pulse
-          length: The length of the pulse
-          freq: The frequency of the pulse
+          delaytime: The delaytime
     '''
 
     def __init__(self,
