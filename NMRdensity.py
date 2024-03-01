@@ -16,6 +16,21 @@ cfC = 77
 pl90C = 77
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class chloroform:
     '''
     Initialize a chloroform instance
@@ -33,6 +48,7 @@ class chloroform:
             wC: Lamor frequency of carbon, in unit of MHz
             cfC: Center frequency of carbon, in unit of PPM
             pl90C: The calibrated 90 degree pulse for carbon
+            Jfreq: J coupling frequency
     '''
 
     def __init__(self,
@@ -49,6 +65,7 @@ class chloroform:
                  wC=wC,
                  cfC=cfC,
                  pl90C=pl90H,
+                 Jfreq,
                  ):
         self._wTMS = wTMS
         self._density = np.zeros((2, 2), dtype=complex)
@@ -66,6 +83,7 @@ class chloroform:
         self._wC = wC
         self._cfC = cfC
         self._pl90C = pl90C
+        self._Jfreq=Jfreq
         pass
 
     def reset_proton_params(self,
@@ -111,6 +129,19 @@ class chloroform:
         assert density.shape == self._density.shape
         self._density = density
 
+
+
+    def evolve_density(self,matrix:np.ndarray):
+        assert matrix.shape==self._density.shape
+        new_rho=self._density
+        new_rho=np.matmul(matrix,new_rho)
+        matrix_dag=np.conj(matrix)
+        matrix_dag=np.transpose(matrix_dag)
+        new_rho=np.matmul(new_rho,matrix_dag)
+        return new_rho
+
+
+
     def evolve_all_pulse(self):
         for pulse in self._pulses:
             if isinstance(pulse, pulseSingle):
@@ -120,9 +151,6 @@ class chloroform:
             elif isinstance(pulse, delayTime):
                 pass
 
-    def evolve(self, acquiretime):
-        self.evolve_all_pulse()
-        pass
 
     '''
     Measure the density matrix 
@@ -131,3 +159,21 @@ class chloroform:
 
     def measure(self, channel):
         pass
+
+
+
+    def Mp_matrix(self):
+        return
+
+
+
+
+    def Mc_matrix(self):
+        return
+
+
+
+
+
+if __name__ == "__main__":
+    pass

@@ -1,7 +1,48 @@
+import numpy as np
+
+
+def I_matrix():
+    return np.array([[1, 0], [0, 1]])
+
+
+def Rx_matrix(theta):
+    return np.array([[np.cos(theta / 2), -1j * np.sin(theta / 2)], [-1j * np.sin(theta / 2), np.cos(theta / 2)]])
+
+
+def Rx_matrix_first(theta):
+    return np.kron(np.array([[np.cos(theta / 2), -1j * np.sin(theta / 2)], [-1j * np.sin(theta / 2), np.cos(theta / 2)]]),I_matrix())
+
+
+def Rx_matrix_second(theta):
+    return np.kron(I_matrix(),np.array([[np.cos(theta / 2), -1j * np.sin(theta / 2)], [-1j * np.sin(theta / 2), np.cos(theta / 2)]]))
+
+
+def Ry_matrix(theta):
+    return np.array([[np.cos(theta / 2), -1 * np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]])
+
+
+def Ry_matrix_first(theta):
+    return np.kron(np.array([[np.cos(theta / 2), -1 * np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]]),I_matrix())
+
+
+def Ry_matrix_second(theta):
+    return np.kron(I_matrix(),np.array([[np.cos(theta / 2), -1 * np.sin(theta / 2)], [np.sin(theta / 2), np.cos(theta / 2)]]))
+
+
+def Rzz_matrix(theta):
+    return np.array([[np.exp(-1j * theta / 2), 0, 0, 0],
+                     [0, np.exp(1j * theta / 2), 0, 0],
+                     [0, 0, np.exp(1j * theta / 2), 0],
+                     [0, 0, 0, np.exp(-1j * theta / 2)]])
+
+
 class pulse:
 
     def __init__(self):
         pass
+
+    def get_matrix(self, pl90length):
+        raise NotImplementedError
 
 
 '''
@@ -29,6 +70,9 @@ class pulseSingle(pulse):
         self._freq = freq
         pass
 
+    def get_matrix(self, pl90length):
+        raise NotImplementedError
+
 
 '''
 Two qubits NMR pulse
@@ -47,21 +91,17 @@ class pulseTwo(pulse):
           freq2: The frequency of the second pulse
     '''
 
-    def __init__(self,
-                 channel1,
-                 length1,
-                 freq1,
-                 channel2,
-                 length2,
-                 freq2,
-                 ):
+    def __init__(self, channel1, length1, freq1, channel2, length2, freq2):
+        super().__init__()
         self._channel1 = channel1
         self._length1 = length1
         self._freq1 = freq1
         self._channel2 = channel2
         self._length2 = length2
         self._freq2 = freq2
-        pass
+
+    def get_matrix(self, pl90length):
+        raise NotImplementedError
 
 
 class delayTime(pulse):
@@ -71,8 +111,9 @@ class delayTime(pulse):
           delaytime: The delaytime
     '''
 
-    def __init__(self,
-                 delaytime
-                 ):
+    def __init__(self, delaytime):
+        super().__init__()
         self._delaytime = delaytime
-        pass
+
+    def get_matrix(self, pl90length):
+        raise NotImplementedError
