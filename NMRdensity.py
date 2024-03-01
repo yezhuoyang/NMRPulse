@@ -14,7 +14,7 @@ pl90H = 13
 wC = 15.6858599000000010
 cfC = 77
 pl90C = 77
-
+Jfreq=215
 
 
 
@@ -48,7 +48,7 @@ class chloroform:
             wC: Lamor frequency of carbon, in unit of MHz
             cfC: Center frequency of carbon, in unit of PPM
             pl90C: The calibrated 90 degree pulse for carbon
-            Jfreq: J coupling frequency
+            Jfreq: J coupling frequency, in unit of Hz
     '''
 
     def __init__(self,
@@ -65,7 +65,7 @@ class chloroform:
                  wC=wC,
                  cfC=cfC,
                  pl90C=pl90H,
-                 Jfreq,
+                 Jfreq=Jfreq,
                  ):
         self._wTMS = wTMS
         self._density = np.zeros((2, 2), dtype=complex)
