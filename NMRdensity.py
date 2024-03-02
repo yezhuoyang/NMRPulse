@@ -189,8 +189,8 @@ class chloroform:
         '''
         Normalize the spectrum by integral value
         '''
-        integral_real = abs(np.trapz(self._proton_freq_ppm, np.real(self._proton_freq_domain)))
-        integral_imag = abs(np.trapz(self._proton_freq_ppm, np.imag(self._proton_freq_domain)))
+        integral_real = abs(np.trapz(self._proton_freq_ppm, abs(np.real(self._proton_freq_domain))))
+        integral_imag = abs(np.trapz(self._proton_freq_ppm, abs(np.imag(self._proton_freq_domain))))
         self._proton_freq_domain = np.real(self._proton_freq_domain) / integral_real + 1j*np.imag(
             self._proton_freq_domain) / integral_imag
 
@@ -224,8 +224,8 @@ class chloroform:
         '''
         Normalize the spectrum by integral value
         '''
-        integral_real = abs(np.trapz(self._carbon_freq_ppm, np.real(self._carbon_freq_domain)))
-        integral_imag = abs(np.trapz(self._carbon_freq_ppm, np.imag(self._carbon_freq_domain)))
+        integral_real = abs(np.trapz(self._carbon_freq_ppm, abs(np.real(self._carbon_freq_domain))))
+        integral_imag = abs(np.trapz(self._carbon_freq_ppm, abs(np.imag(self._carbon_freq_domain))))
         self._carbon_freq_domain = np.real(self._carbon_freq_domain) / integral_real + 1j*np.imag(
             self._carbon_freq_domain) / integral_imag
 

@@ -5,7 +5,7 @@ T1p = 10
 # T2 time of proton, in unit of second
 T2p = 2
 # T2* time of proton, in unit of second
-T2starp = 100e-3
+T2starp = 200e-3
 # T1 time of carbon, in unit of second
 T1C = 10
 # T2 time of carbon, in unit of second
