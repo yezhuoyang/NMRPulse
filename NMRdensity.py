@@ -1,6 +1,7 @@
 import numpy as np
 from Pulses import pulse, pulseSingle, pulseTwo, delayTime
 from params import *
+from scipy.fft import fft, fftfreq, fftshift
 
 
 class chloroform:
@@ -47,12 +48,21 @@ class chloroform:
         self._dwell = dwell
         self._Npoints = Npoints
 
-        self._times = np.linspace(start=0, stop=(self._Npoints-1)*self._dwell, num=self._Npoints)
+        self._times = np.linspace(start=0, stop=(self._Npoints - 1) * self._dwell, num=self._Npoints)
         self._proton_time_domain = []
+        self._proton_freq_domain = []
+        self._proton_freq_ppm = []
+
         self._carbon_time_domain = []
+        self._carbon_freq_domain = []
+        self._carbon_freq_ppm = []
 
         self._density = np.zeros((4, 4), dtype=complex)
-        self._density[0][0] = 1
+        self._density[0][0] = 0.4
+        self._density[1][1] = 0.4
+        self._density[2][2] = 0.1
+        self._density[3][3] = 0.1
+
         self._pulses = []
         self._T1p = T1p
         self._T2p = T2p
@@ -144,8 +154,16 @@ class chloroform:
         return self._proton_time_domain
 
     def read_proton_spectrum(self):
-        return
 
+        fft_result = np.fft.fft(self._proton_time_domain)
+        fft_freq = np.fft.fftfreq(self._Npoints, self._dwell)
+
+        fft_freq = [x * (10 ** 6) / wTMS + cfH for x in fft_freq]
+
+        self._proton_freq_domain = fft_result
+        self._proton_freq_ppm = fft_freq
+
+        return self._proton_freq_ppm, self._proton_freq_domain
 
     def read_Carbon_time(self):
         self._carbon_time_domain = []
@@ -153,9 +171,16 @@ class chloroform:
             self._carbon_time_domain.append(self.measure_Carbon(t))
         return self._carbon_time_domain
 
-
     def read_Carbon_spectrum(self):
-        return
+        fft_result = np.fft.fft(self._proton_time_domain)
+        fft_freq = np.fft.fftfreq(self._Npoints, self._dwell)
+
+        fft_freq = [x * (10 ** 6) / wTMS + cfC for x in fft_freq]
+
+        self._carbon_freq_domain = fft_result
+        self._carbon_freq_ppm = fft_freq
+
+        return self._carbon_freq_ppm, self._carbon_freq_domain
 
     '''
     Measure the density matrix 
@@ -163,14 +188,14 @@ class chloroform:
 
     def measure_proton(self, t):
         Mp = self.Mp_matrix(t)
-        return np.trace(np.matmul(self._density, Mp))
+        return np.trace(np.matmul(self._density, Mp))*np.exp(-t/self._T2starp)
 
     def measure_Carbon(self, t):
         MC = self.MC_matrix(t)
-        return np.trace(np.matmul(self._density, MC))
+        return np.trace(np.matmul(self._density, MC))*np.exp(-t/self._T2starC)
 
     def Mp_matrix(self, t):
-        J = self._Jfreq
+        J = self._Jfreq * 2 * np.pi
         Mp = np.array([[np.exp(-1j * J * t / 2), 0, -1j * np.exp(-1j * J * t / 2), 0],
                        [0, np.exp(1j * J * t / 2), 0, -1j * np.exp(1j * J * t / 2)],
                        [-1j * np.exp(-1j * J * t / 2), 0, -np.exp(-1j * J * t / 2), 0],
@@ -179,19 +204,13 @@ class chloroform:
         return Mp
 
     def MC_matrix(self, t):
-        J = self._Jfreq
+        J = self._Jfreq * 2 * np.pi
         MC = np.array([[np.exp(-1j * J * t / 2), -1j * np.exp(-1j * J * t / 2), 0, 0],
                        [-1j * np.exp(-1j * J * t / 2), -np.exp(-1j * J * t / 2), 0, 0],
                        [0, 0, np.exp(1j * J * t / 2), -1j * np.exp(1j * J * t / 2)],
                        [0, 0, -1j * np.exp(1j * J * t / 2), -np.exp(1j * J * t / 2)]]
                       )
         return MC
-
-
-
-
-
-
 
 
 import matplotlib.pyplot as plt
@@ -207,11 +226,19 @@ if __name__ == "__main__":
 
     proton_time_domain = NMRsample.read_proton_time()
 
-
     print(proton_time_domain)
 
-    times=[1000*x for x in times]
-
+    times = [1000 * x for x in times]
 
     plt.plot(times, np.real(proton_time_domain))
+    plt.show()
+
+    proton_freq_ppm, proton_freq_domain = NMRsample.read_proton_spectrum()
+
+    plt.scatter(proton_freq_ppm, np.real(proton_freq_domain))
+
+    print(proton_freq_ppm)
+
+    plt.xlim(2, 8)
+
     plt.show()
