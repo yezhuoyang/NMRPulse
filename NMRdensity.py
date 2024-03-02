@@ -1,34 +1,6 @@
 import numpy as np
-from .Pulses import pulse, pulseSingle, pulseTwo, delayTime
-
-wTMS = 62
-T1p = 10
-T2p = 2
-T2starp = 200
-T1C = 10
-T2C = 2
-T2starC = 50
-wH = 62.3750106999999970
-cfH = 5
-pl90H = 13
-wC = 15.6858599000000010
-cfC = 77
-pl90C = 77
-Jfreq=215
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+from Pulses import pulse, pulseSingle, pulseTwo, delayTime
+from params import *
 
 
 class chloroform:
@@ -36,6 +8,8 @@ class chloroform:
     Initialize a chloroform instance
     :param
             wTMS: The TMS frequency, in unit of MHZ
+            dwell: Dwell time, in unit of second
+            Npoints: Number of points
             T1p: T1 time of proton, in unit of second
             T2p: T2 time of proton, in unit of second
             T2starp: T2* time of proton, in unit of ms
@@ -53,6 +27,8 @@ class chloroform:
 
     def __init__(self,
                  wTMS=wTMS,
+                 dwell=dwell,
+                 Npoints=Npoints,
                  T1p=T1p,
                  T2p=T2p,
                  T2starp=T2starp,
@@ -68,7 +44,14 @@ class chloroform:
                  Jfreq=Jfreq,
                  ):
         self._wTMS = wTMS
-        self._density = np.zeros((2, 2), dtype=complex)
+        self._dwell = dwell
+        self._Npoints = Npoints
+
+        self._times = np.linspace(start=0, stop=(self._Npoints-1)*self._dwell, num=self._Npoints)
+        self._proton_time_domain = []
+        self._carbon_time_domain = []
+
+        self._density = np.zeros((4, 4), dtype=complex)
         self._density[0][0] = 1
         self._pulses = []
         self._T1p = T1p
@@ -83,8 +66,11 @@ class chloroform:
         self._wC = wC
         self._cfC = cfC
         self._pl90C = pl90C
-        self._Jfreq=Jfreq
+        self._Jfreq = Jfreq
         pass
+
+    def get_times(self):
+        return self._times
 
     def reset_proton_params(self,
                             T1p,
@@ -129,51 +115,103 @@ class chloroform:
         assert density.shape == self._density.shape
         self._density = density
 
-
-
-    def evolve_density(self,matrix:np.ndarray):
-        assert matrix.shape==self._density.shape
-        new_rho=self._density
-        new_rho=np.matmul(matrix,new_rho)
-        matrix_dag=np.conj(matrix)
-        matrix_dag=np.transpose(matrix_dag)
-        new_rho=np.matmul(new_rho,matrix_dag)
+    def evolve_density(self, matrix: np.ndarray):
+        assert matrix.shape == self._density.shape
+        new_rho = self._density
+        new_rho = np.matmul(matrix, new_rho)
+        matrix_dag = np.conj(matrix)
+        matrix_dag = np.transpose(matrix_dag)
+        new_rho = np.matmul(new_rho, matrix_dag)
         return new_rho
-
-
 
     def evolve_all_pulse(self):
         for pulse in self._pulses:
             if isinstance(pulse, pulseSingle):
-                pass
+                matrix = pulse.get_matrix(self._pl90H, self._pl90C)
+                self.evolve_density(matrix)
             elif isinstance(pulse, pulseTwo):
-                pass
+                matrix = pulse.get_matrix(self._pl90H, self._pl90C)
+                self.evolve_density(matrix)
             elif isinstance(pulse, delayTime):
-                pass
+                matrix = pulse.get_matrix(self._Jfreq)
+                self.evolve_density(matrix)
 
+    def read_proton_time(self):
+        self._proton_time_domain = []
+        for t in self._times:
+            print(t)
+            self._proton_time_domain.append(self.measure_proton(t))
+        return self._proton_time_domain
+
+    def read_proton_spectrum(self):
+        return
+
+
+    def read_Carbon_time(self):
+        self._carbon_time_domain = []
+        for t in self._times:
+            self._carbon_time_domain.append(self.measure_Carbon(t))
+        return self._carbon_time_domain
+
+
+    def read_Carbon_spectrum(self):
+        return
 
     '''
     Measure the density matrix 
-    
     '''
 
-    def measure(self, channel):
-        pass
+    def measure_proton(self, t):
+        Mp = self.Mp_matrix(t)
+        return np.trace(np.matmul(self._density, Mp))
+
+    def measure_Carbon(self, t):
+        MC = self.MC_matrix(t)
+        return np.trace(np.matmul(self._density, MC))
+
+    def Mp_matrix(self, t):
+        J = self._Jfreq
+        Mp = np.array([[np.exp(-1j * J * t / 2), 0, -1j * np.exp(-1j * J * t / 2), 0],
+                       [0, np.exp(1j * J * t / 2), 0, -1j * np.exp(1j * J * t / 2)],
+                       [-1j * np.exp(-1j * J * t / 2), 0, -np.exp(-1j * J * t / 2), 0],
+                       [0, -1j * np.exp(1j * J * t / 2), 0, -np.exp(1j * J * t / 2)]]
+                      )
+        return Mp
+
+    def MC_matrix(self, t):
+        J = self._Jfreq
+        MC = np.array([[np.exp(-1j * J * t / 2), -1j * np.exp(-1j * J * t / 2), 0, 0],
+                       [-1j * np.exp(-1j * J * t / 2), -np.exp(-1j * J * t / 2), 0, 0],
+                       [0, 0, np.exp(1j * J * t / 2), -1j * np.exp(1j * J * t / 2)],
+                       [0, 0, -1j * np.exp(1j * J * t / 2), -np.exp(1j * J * t / 2)]]
+                      )
+        return MC
 
 
 
-    def Mp_matrix(self):
-        return
 
 
 
 
-    def Mc_matrix(self):
-        return
 
-
-
-
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
-    pass
+    NMRsample = chloroform()
+    NMRsample.print_density()
+
+    times = NMRsample.get_times()
+
+    print(times)
+    print(len(times))
+
+    proton_time_domain = NMRsample.read_proton_time()
+
+
+    print(proton_time_domain)
+
+    times=[1000*x for x in times]
+
+
+    plt.plot(times, np.real(proton_time_domain))
+    plt.show()
