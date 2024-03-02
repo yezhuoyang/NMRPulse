@@ -40,7 +40,7 @@ class chloroform:
                  pl90H=pl90H,
                  wC=wC,
                  cfC=cfC,
-                 pl90C=pl90H,
+                 pl90C=pl90C,
                  Jfreq=Jfreq,
                  ):
         self._wTMS = wTMS
@@ -139,7 +139,7 @@ class chloroform:
         matrix_dag = np.transpose(matrix_dag)
         new_rho = np.matmul(new_rho, matrix_dag)
         self._density = new_rho
-        print(self._density)
+        #print(self._density)
 
     def evolve_all_pulse(self):
         if self._pulses_evolved:

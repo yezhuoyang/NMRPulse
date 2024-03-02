@@ -11,6 +11,11 @@ def Rx_matrix(theta):
                      [-1j * np.sin(theta / 2), np.cos(theta / 2)]])
 
 
+def Rz_matrix(theta):
+    return np.array([[np.exp(-1j * theta / 2), 0],
+                     [0, np.exp(1j * theta / 2)]])
+
+
 def Rx_matrix_first(theta):
     return np.kron(
         np.array([[np.cos(theta / 2), -1j * np.sin(theta / 2)],
@@ -86,11 +91,11 @@ class pulseSingle(pulse):
         if freq == wC:
             self._is_carbon = True
 
-    def get_matrix(self,pl90lengthp,pl90lengthC):
+    def get_matrix(self, pl90lengthp, pl90lengthC):
         if self._is_carbon:
-            theta = (self._length / pl90lengthC) * np.pi / 2
+            theta = (self._length / pl90lengthC) * np.pi
         else:
-            theta = (self._length / pl90lengthp) * np.pi / 2
+            theta = (self._length / pl90lengthp) * np.pi
         if self._channel == 0:
             if self._is_carbon:
                 return Rx_matrix_second(theta)
@@ -152,11 +157,11 @@ class pulseTwo(pulse):
     def get_matrix(self, pl90lengthp, pl90lengthC):
 
         if self._is_1_carbon:
-            theta1 = (self._length1 / pl90lengthC) * np.pi / 2
-            theta2 = (self._length2 / pl90lengthp) * np.pi / 2
+            theta1 = (self._length1 / pl90lengthC) * np.pi
+            theta2 = (self._length2 / pl90lengthp) * np.pi
         else:
-            theta1 = (self._length1 / pl90lengthp) * np.pi / 2
-            theta2 = (self._length2 / pl90lengthC) * np.pi / 2
+            theta1 = (self._length1 / pl90lengthp) * np.pi
+            theta2 = (self._length2 / pl90lengthC) * np.pi
 
         matrix1 = None
         matrix2 = None
@@ -198,4 +203,6 @@ class delayTime(pulse):
 
     def get_matrix(self, Jfreq):
         theta = np.pi * Jfreq * self._delaytime
+        print("Jfreq * self._delaytime")
+        print(Jfreq * self._delaytime)
         return Rzz_matrix(theta)

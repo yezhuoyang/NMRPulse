@@ -17,13 +17,13 @@ wH = 62.3750106999999970e6
 # Center frequency of proton, in unit of PPM
 cfH = 5
 # The calibrated 90 degree pulse for proton
-pl90H = 13
+pl90H = 13e-6
 # Lamor frequency of carbon, in unit of MHz
 wC = 15.6858599000000010e6
 # Center frequency of carbon, in unit of PPM
 cfC = 77
 # The calibrated 90 degree pulse for carbon
-pl90C = 77
+pl90C = 77e-6
 #   J coupling frequency, in unit of Hz
 Jfreq = 215
 # Dwell time, in unit of s
