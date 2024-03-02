@@ -1,6 +1,6 @@
 import numpy as np
 from Pulses import pulseTwo, pulseSingle, delayTime
-
+from params import *
 
 
 

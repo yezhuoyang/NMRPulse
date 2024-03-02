@@ -12,7 +12,7 @@ class chloroform:
             Npoints: Number of points
             T1p: T1 time of proton, in unit of second
             T2p: T2 time of proton, in unit of second
-            T2starp: T2* time of proton, in unit of ms
+            T2starp: T2* time of proton, in unit of second
             T1C: T1 time of carbon, in unit of second
             T2C: T2 time of carbon, in unit of second
             T2starC: T2* time of carbon, in unit of second
@@ -57,9 +57,9 @@ class chloroform:
         self._carbon_freq_ppm = []
 
         self._density = np.zeros((4, 4), dtype=complex)
-        self._density[0][0] = 1
+        self._density[0][0] = 0
         self._density[1][1] = 0
-        self._density[2][2] = 0
+        self._density[2][2] = 1
         self._density[3][3] = 0
 
         self._pulses = []
@@ -117,6 +117,9 @@ class chloroform:
         self._pulses.append(pl)
         self._pulses_evolved = False
 
+    def set_pulses(self, pulses):
+        self._pulses = pulses
+
     def get_density(self):
         return self._density
 
@@ -163,6 +166,16 @@ class chloroform:
         fft_result = np.fft.fft(self._proton_time_domain)
         fft_freq = np.fft.fftfreq(self._Npoints, self._dwell)
 
+        # Combine the lists into a list of tuples and sort them by frequency
+        combined_list = sorted(zip(list(fft_freq), list(fft_result)), key=lambda x: x[0])
+
+        # Unzip the combined list back into two lists
+        sorted_fft_freq, sorted_fft_result = zip(*combined_list)
+
+        # If you need the results as lists (zip returns tuples)
+        fft_freq = list(sorted_fft_freq)
+        fft_result = list(sorted_fft_result)
+
         fft_freq = [x * (10 ** 6) / wTMS + cfH for x in fft_freq]
 
         self._proton_freq_domain = fft_result
@@ -177,10 +190,21 @@ class chloroform:
         return self._carbon_time_domain
 
     def read_Carbon_spectrum(self):
-        fft_result = np.fft.fft(self._proton_time_domain)
+
+        fft_result = np.fft.fft(self._carbon_time_domain)
         fft_freq = np.fft.fftfreq(self._Npoints, self._dwell)
 
-        fft_freq = [x * (10 ** 6) / wTMS + cfC for x in fft_freq]
+        # Combine the lists into a list of tuples and sort them by frequency
+        combined_list = sorted(zip(list(fft_freq), list(fft_result)), key=lambda x: x[0])
+
+        # Unzip the combined list back into two lists
+        sorted_fft_freq, sorted_fft_result = zip(*combined_list)
+
+        # If you need the results as lists (zip returns tuples)
+        fft_freq = list(sorted_fft_freq)
+        fft_result = list(sorted_fft_result)
+
+        fft_freq = [x * (10 ** 6) / wTMS + cfH for x in fft_freq]
 
         self._carbon_freq_domain = fft_result
         self._carbon_freq_ppm = fft_freq
@@ -217,56 +241,89 @@ class chloroform:
                       )
         return MC
 
-    def show_proton_fid_real(self, maxtime):
+    def show_proton_fid_real(self, maxtime, store=False, path=None):
         proton_data = NMRsample.read_proton_time()
-        plt.plot(self._times, np.real(proton_data))
+        plt.plot(self._times, np.real(proton_data), label="Proton test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(-1, 1)
         plt.xlabel("Time/second")
         plt.legend()
+        if store:
+            plt.savefig(path)
         plt.show()
 
-    def show_proton_fid_imag(self, maxtime):
+    def show_proton_fid_imag(self, maxtime, store=False, path=None):
         proton_data = NMRsample.read_proton_time()
-        plt.plot(self._times, np.imag(proton_data))
+        plt.plot(self._times, np.imag(proton_data), label="Proton test_fid.py(Imaginary part)")
         plt.xlim(0, maxtime)
         plt.ylim(-1, 1)
         plt.xlabel("Time/second")
         plt.legend()
+        if store:
+            plt.savefig(path)
         plt.show()
 
-    def show_proton_spectrum_real(self):
-        return
+    def show_proton_spectrum_real(self, minppm, maxppm, store=False, path=None):
+        plt.plot(self._proton_freq_ppm, np.real(self._proton_freq_domain), label="Proton spectrum(Real part)")
+        plt.xlim(minppm, maxppm)
+        plt.axvline(x=cfH, color="red", linestyle="--", label="Center frequency of proton")
+        plt.xlabel("Frequency/ppm")
+        plt.legend()
+        if store:
+            plt.savefig(path)
+        plt.show()
 
+    def show_proton_spectrum_imag(self, minppm, maxppm, store=False, path=None):
+        plt.plot(self._proton_freq_ppm, np.imag(self._proton_freq_domain), label="Proton spectrum(Imaginary part)")
+        plt.xlim(minppm, maxppm)
+        plt.axvline(x=cfH, color="red", linestyle="--", label="Center frequency of proton")
+        plt.xlabel("Frequency/ppm")
+        plt.legend()
+        if store:
+            plt.savefig(path)
+        plt.show()
 
-    def show_proton_spectrum_imag(self):
-        return
-
-
-    def show_carbon_fid_real(self, maxtime):
+    def show_carbon_fid_real(self, maxtime, store=False, path=None):
         carbon_data = NMRsample.read_Carbon_time()
-        plt.plot(self._times, np.real(carbon_data))
+        plt.plot(self._times, np.real(carbon_data), label="Carbon test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(-1, 1)
         plt.xlabel("Time/second")
         plt.legend()
+        if store:
+            plt.savefig(path)
         plt.show()
 
-    def show_carbon_fid_imag(self, maxtime):
+    def show_carbon_fid_imag(self, maxtime, store=False, path=None):
         carbon_data = NMRsample.read_Carbon_time()
-        plt.plot(self._times, np.imag(carbon_data))
+        plt.plot(self._times, np.imag(carbon_data), label="Carbon test_fid.py(Imaginary part)")
         plt.xlim(0, maxtime)
         plt.ylim(-1, 1)
         plt.xlabel("Time/second")
         plt.legend()
+        if store:
+            plt.savefig(path)
         plt.show()
 
-    def show_carbon_spectrum_real(self):
-        return
+    def show_carbon_spectrum_real(self, minppm, maxppm, store=False, path=None):
+        plt.plot(self._carbon_freq_ppm, np.real(self._carbon_freq_domain), label="Carbon spectrum(Real part)")
+        plt.xlim(minppm, maxppm)
+        plt.axvline(x=cfC, color="red", linestyle="--", label="Center frequency of carbon")
+        plt.xlabel("Frequency/ppm")
+        plt.legend()
+        if store:
+            plt.savefig(path)
+        plt.show()
 
-
-    def show_carbon_spectrum_imag(self):
-        return
+    def show_carbon_spectrum_imag(self, minppm, maxppm, store=False, path=None):
+        plt.plot(self._carbon_freq_ppm, np.imag(self._carbon_freq_domain), label="Carbon spectrum(Imaginary part)")
+        plt.xlim(minppm, maxppm)
+        plt.axvline(x=cfC, color="red", linestyle="--", label="Center frequency of carbon")
+        plt.xlabel("Frequency/ppm")
+        plt.legend()
+        if store:
+            plt.savefig(path)
+        plt.show()
 
 
 import matplotlib.pyplot as plt
