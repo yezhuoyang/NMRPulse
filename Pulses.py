@@ -198,4 +198,4 @@ class delayTime(pulse):
 
     def get_matrix(self, Jfreq):
         theta = np.pi * Jfreq * self._delaytime
-        raise Rzz_matrix(theta)
+        return Rzz_matrix(theta)
