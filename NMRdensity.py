@@ -1,7 +1,6 @@
 import numpy as np
 from Pulses import pulse, pulseSingle, pulseTwo, delayTime
 from params import *
-from scipy.fft import fft, fftfreq, fftshift
 
 
 class chloroform:
@@ -58,12 +57,14 @@ class chloroform:
         self._carbon_freq_ppm = []
 
         self._density = np.zeros((4, 4), dtype=complex)
-        self._density[0][0] = 0.4
-        self._density[1][1] = 0.4
-        self._density[2][2] = 0.1
-        self._density[3][3] = 0.1
+        self._density[0][0] = 1
+        self._density[1][1] = 0
+        self._density[2][2] = 0
+        self._density[3][3] = 0
 
         self._pulses = []
+        self._pulses_evolved = False
+
         self._T1p = T1p
         self._T2p = T2p
         self._T2starp = T2starp
@@ -114,6 +115,7 @@ class chloroform:
 
     def add_pulse(self, pl: pulse):
         self._pulses.append(pl)
+        self._pulses_evolved = False
 
     def get_density(self):
         return self._density
@@ -132,9 +134,12 @@ class chloroform:
         matrix_dag = np.conj(matrix)
         matrix_dag = np.transpose(matrix_dag)
         new_rho = np.matmul(new_rho, matrix_dag)
-        return new_rho
+        self._density = new_rho
+        print(self._density)
 
     def evolve_all_pulse(self):
+        if (self._pulses_evolved):
+            return
         for pulse in self._pulses:
             if isinstance(pulse, pulseSingle):
                 matrix = pulse.get_matrix(self._pl90H, self._pl90C)
@@ -145,11 +150,11 @@ class chloroform:
             elif isinstance(pulse, delayTime):
                 matrix = pulse.get_matrix(self._Jfreq)
                 self.evolve_density(matrix)
+        self._pulses_evolved = True
 
     def read_proton_time(self):
         self._proton_time_domain = []
         for t in self._times:
-            print(t)
             self._proton_time_domain.append(self.measure_proton(t))
         return self._proton_time_domain
 
@@ -188,11 +193,11 @@ class chloroform:
 
     def measure_proton(self, t):
         Mp = self.Mp_matrix(t)
-        return np.trace(np.matmul(self._density, Mp))*np.exp(-t/self._T2starp)
+        return np.trace(np.matmul(self._density, Mp)) * np.exp(-t / self._T2starp)
 
     def measure_Carbon(self, t):
         MC = self.MC_matrix(t)
-        return np.trace(np.matmul(self._density, MC))*np.exp(-t/self._T2starC)
+        return np.trace(np.matmul(self._density, MC)) * np.exp(-t / self._T2starC)
 
     def Mp_matrix(self, t):
         J = self._Jfreq * 2 * np.pi
@@ -212,33 +217,63 @@ class chloroform:
                       )
         return MC
 
+    def show_proton_fid_real(self, maxtime):
+        proton_data = NMRsample.read_proton_time()
+        plt.plot(self._times, np.real(proton_data))
+        plt.xlim(0, maxtime)
+        plt.ylim(-1, 1)
+        plt.xlabel("Time/second")
+        plt.legend()
+        plt.show()
+
+    def show_proton_fid_imag(self, maxtime):
+        proton_data = NMRsample.read_proton_time()
+        plt.plot(self._times, np.imag(proton_data))
+        plt.xlim(0, maxtime)
+        plt.ylim(-1, 1)
+        plt.xlabel("Time/second")
+        plt.legend()
+        plt.show()
+
+    def show_proton_spectrum_real(self):
+        return
+
+
+    def show_proton_spectrum_imag(self):
+        return
+
+
+    def show_carbon_fid_real(self, maxtime):
+        carbon_data = NMRsample.read_Carbon_time()
+        plt.plot(self._times, np.real(carbon_data))
+        plt.xlim(0, maxtime)
+        plt.ylim(-1, 1)
+        plt.xlabel("Time/second")
+        plt.legend()
+        plt.show()
+
+    def show_carbon_fid_imag(self, maxtime):
+        carbon_data = NMRsample.read_Carbon_time()
+        plt.plot(self._times, np.imag(carbon_data))
+        plt.xlim(0, maxtime)
+        plt.ylim(-1, 1)
+        plt.xlabel("Time/second")
+        plt.legend()
+        plt.show()
+
+    def show_carbon_spectrum_real(self):
+        return
+
+
+    def show_carbon_spectrum_imag(self):
+        return
+
 
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     NMRsample = chloroform()
-    NMRsample.print_density()
-
-    times = NMRsample.get_times()
-
-    print(times)
-    print(len(times))
 
     proton_time_domain = NMRsample.read_proton_time()
 
     print(proton_time_domain)
-
-    times = [1000 * x for x in times]
-
-    plt.plot(times, np.real(proton_time_domain))
-    plt.show()
-
-    proton_freq_ppm, proton_freq_domain = NMRsample.read_proton_spectrum()
-
-    plt.scatter(proton_freq_ppm, np.real(proton_freq_domain))
-
-    print(proton_freq_ppm)
-
-    plt.xlim(2, 8)
-
-    plt.show()

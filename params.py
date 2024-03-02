@@ -13,5 +13,5 @@ wC = 15.6858599000000010e6
 cfC = 77
 pl90C = 77
 Jfreq = 215
-dwell = 200e-6
-Npoints = 8192
+dwell = 1000e-6
+Npoints = 4096
