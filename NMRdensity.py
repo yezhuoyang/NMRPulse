@@ -219,6 +219,21 @@ class chloroform:
         Mp = self.Mp_matrix(t)
         return np.trace(np.matmul(self._density, Mp)) * np.exp(-t / self._T2starp)
 
+    def integral_proton_spectrum_real(self):
+        return np.trapz(self._proton_freq_ppm, np.real(self._proton_freq_domain))
+
+    def integral_proton_spectrum_imag(self):
+        return np.trapz(self._proton_freq_ppm, np.imag(self._proton_freq_domain))
+
+
+
+    def integral_carbon_spectrum_real(self):
+        return np.trapz(self._carbon_freq_ppm, np.real(self._carbon_freq_domain))
+
+    def integral_carbon_spectrum_imag(self):
+        return np.trapz(self._carbon_freq_ppm, np.imag(self._carbon_freq_domain))
+
+
     def measure_Carbon(self, t):
         MC = self.MC_matrix(t)
         return np.trace(np.matmul(self._density, MC)) * np.exp(-t / self._T2starC)
@@ -242,8 +257,7 @@ class chloroform:
         return MC
 
     def show_proton_fid_real(self, maxtime, store=False, path=None):
-        proton_data = NMRsample.read_proton_time()
-        plt.plot(self._times, np.real(proton_data), label="Proton test_fid.py(Real part)")
+        plt.plot(self._times, np.real(self._proton_time_domain), label="Proton test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(-1, 1)
         plt.xlabel("Time/second")
@@ -253,8 +267,7 @@ class chloroform:
         plt.show()
 
     def show_proton_fid_imag(self, maxtime, store=False, path=None):
-        proton_data = NMRsample.read_proton_time()
-        plt.plot(self._times, np.imag(proton_data), label="Proton test_fid.py(Imaginary part)")
+        plt.plot(self._times, np.imag(self._proton_time_domain), label="Proton test_fid.py(Imaginary part)")
         plt.xlim(0, maxtime)
         plt.ylim(-1, 1)
         plt.xlabel("Time/second")
@@ -284,8 +297,7 @@ class chloroform:
         plt.show()
 
     def show_carbon_fid_real(self, maxtime, store=False, path=None):
-        carbon_data = NMRsample.read_Carbon_time()
-        plt.plot(self._times, np.real(carbon_data), label="Carbon test_fid.py(Real part)")
+        plt.plot(self._times, np.real(self._carbon_time_domain), label="Carbon test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(-1, 1)
         plt.xlabel("Time/second")
@@ -295,8 +307,7 @@ class chloroform:
         plt.show()
 
     def show_carbon_fid_imag(self, maxtime, store=False, path=None):
-        carbon_data = NMRsample.read_Carbon_time()
-        plt.plot(self._times, np.imag(carbon_data), label="Carbon test_fid.py(Imaginary part)")
+        plt.plot(self._times, np.real(self._carbon_freq_domain), label="Carbon test_fid.py(Imaginary part)")
         plt.xlim(0, maxtime)
         plt.ylim(-1, 1)
         plt.xlabel("Time/second")
