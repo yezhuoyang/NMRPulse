@@ -141,7 +141,7 @@ class pulseTwo(pulse):
         self._length1 = length1
         self._freq1 = freq1
         assert freq1 == wC or freq1 == wH
-        self._is_carbon = False
+        self._is_1_carbon = False
         if freq1 == wC:
             self._is_1_carbon = True
 

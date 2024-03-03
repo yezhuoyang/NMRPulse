@@ -33,7 +33,7 @@ def pulse_length_calib_proton():
 
     pulses_length_list = [2 * x * pl90H * 10 ** 6 for x in pulses_length_list]
     plt.scatter(pulses_length_list, integra_list, label="Integral value of proton spectrum")
-    plt.axvline(x=pl90H*10**6, color="red", linestyle="--", label="Measured 90-x pulse for proton")
+    plt.axvline(x=pl90H * 10 ** 6, color="red", linestyle="--", label="Measured 90-x pulse for proton")
     plt.xlabel("Pulse length Time/ microsecond")
     plt.ylabel("Integral value")
     plt.legend(fontsize=8)
@@ -68,7 +68,7 @@ def pulse_length_calib_carbon():
 
     pulses_length_list = [2 * x * pl90C * 10 ** 6 for x in pulses_length_list]
     plt.scatter(pulses_length_list, integra_list, label="Integral value of carbon spectrum")
-    plt.axvline(x=pl90C*10**6, color="red", linestyle="--", label="Measured 90-x pulse for carbon")
+    plt.axvline(x=pl90C * 10 ** 6, color="red", linestyle="--", label="Measured 90-x pulse for carbon")
     plt.xlabel("Pulse length Time/ microsecond")
     plt.ylabel("Integral value")
     plt.legend(fontsize=8)
@@ -499,11 +499,132 @@ def exact_CNOT_pulse_Ccontrol():
                                         path="Figure/CNOTExactcarbon-Ccontrol.png")
 
 
+def Xgate_proton():
+    return
+
+
+def Xgate_carbon():
+    return
+
+
 def P1_pulse():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[0.5, 0, 0, 0],
+                                    [0, 0.3, 0, 0],
+                                    [0, 0, -0.3, 0],
+                                    [0, 0, 0, -0.5]], dtype=complex))
+
+    '''
+    Add two approximate CNOT pulse sequence
+    (pi/2)Ix2---(2Iz1Iz2)---(pi/2)Iy2
+    Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
+    '''
+
+
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseTwo(1, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+
+
+    '''
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+    '''
+
+
+    '''
+    Evolve the density matrix with all pulses
+    '''
+    NMRsample.evolve_all_pulse()
+    '''
+    Print the unitary of all pulses:
+    '''
+    print(NMRsample.get_pulse_unitary())
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the spectrum
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/P1proton.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/P1carbon.png")
     return
 
 
 def P2_pulse():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[0.5, 0, 0, 0],
+                                    [0, 0.3, 0, 0],
+                                    [0, 0, -0.3, 0],
+                                    [0, 0, 0, -0.5]], dtype=complex))
+
+    '''
+    Add two approximate CNOT pulse sequence
+    (pi/2)Ix2---(2Iz1Iz2)---(pi/2)Iy2
+    Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
+    '''
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseTwo(1, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+
+    '''
+    Evolve the density matrix with all pulses
+    '''
+    NMRsample.evolve_all_pulse()
+    '''
+    Print the unitary of all pulses:
+    '''
+    print(NMRsample.get_pulse_unitary())
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the spectrum
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/P2proton.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/P2carbon.png")
     return
 
 
@@ -515,5 +636,6 @@ if __name__ == "__main__":
     # approx_CNOT()
     # exact_CZ_pulse()
     # exact_CNOT_pulse_Ccontrol()
-    #pulse_length_calib_carbon()
-    pulse_length_calib_proton()
+    # pulse_length_calib_carbon()
+    # pulse_length_calib_proton()
+    P1_pulse()
