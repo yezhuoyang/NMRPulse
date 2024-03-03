@@ -2,7 +2,7 @@ import numpy as np
 
 
 def all_close(matrix1, matrix2):
-    return np.allclose(matrix1, matrix2, rtol=1e-5, atol=1e-3)
+    return np.allclose(np.real(matrix1), np.real(matrix2), rtol=1e-8, atol=1e-5) and np.allclose(np.imag(matrix1), np.imag(matrix2), rtol=1e-8, atol=1e-5)
 
 
 def hilbert_schmidt_distance(V: np.ndarray, U: np.ndarray):

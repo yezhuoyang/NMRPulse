@@ -500,10 +500,98 @@ def exact_CNOT_pulse_Ccontrol():
 
 
 def Xgate_proton():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[0.5, 0, 0, 0],
+                                    [0, 0.3, 0, 0],
+                                    [0, 0, -0.3, 0],
+                                    [0, 0, 0, -0.5]], dtype=complex))
+
+    '''
+    Add a single pulse on proton.
+    '''
+    NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
+    '''
+    Evolve the density matrix with all pulses
+    '''
+    NMRsample.evolve_all_pulse()
+
+    matrix=NMRsample.get_pulse_unitary()
+    print(matrix)
+
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the data signal in the frequency
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/Xgateproton-protonspectrum.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/Xgateproton-carbonspectrum.png")
+
     return
 
 
 def Xgate_carbon():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[0.5, 0, 0, 0],
+                                    [0, 0.3, 0, 0],
+                                    [0, 0, -0.3, 0],
+                                    [0, 0, 0, -0.5]], dtype=complex))
+
+    '''
+    Add a single pulse on proton.
+    '''
+    NMRsample.add_pulse(pulseSingle(0, pl90C, wC))
+    '''
+    Evolve the density matrix with all pulses
+    '''
+    NMRsample.evolve_all_pulse()
+
+    matrix=NMRsample.get_pulse_unitary()
+    print(matrix)
+
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the data signal in the frequency
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/Xgatecarbon-protonspectrum.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/Xgatecarbon-carbonspectrum.png")
+
     return
 
 
@@ -531,17 +619,7 @@ def P1_pulse():
     NMRsample.add_pulse(delayTime(0.5 / Jfreq))
     NMRsample.add_pulse(pulseTwo(1, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
     NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
-
-
-    '''
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
-    '''
+    NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90C, wC))
 
 
     '''
@@ -592,11 +670,13 @@ def P2_pulse():
     (pi/2)Ix2---(2Iz1Iz2)---(pi/2)Iy2
     Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
     '''
+
     NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
     NMRsample.add_pulse(delayTime(0.5 / Jfreq))
     NMRsample.add_pulse(pulseTwo(1, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
     NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90H, wH))
+
 
     '''
     Evolve the density matrix with all pulses
@@ -638,4 +718,7 @@ if __name__ == "__main__":
     # exact_CNOT_pulse_Ccontrol()
     # pulse_length_calib_carbon()
     # pulse_length_calib_proton()
-    P1_pulse()
+    #P1_pulse()
+
+    #Xgate_proton()
+    Xgate_carbon()
