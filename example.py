@@ -22,10 +22,9 @@ def IZ_pulse(theta):
     '''
     Evolve the density matrix with all pulses
     '''
-    NMRsample.add_pulse(pulseSingle(2, 1/2*pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
     NMRsample.add_pulse(pulseSingle(1, theta * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 1/2*pl90H, wH))
-
+    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
 
     NMRsample.evolve_all_pulse()
     matrix = NMRsample.get_pulse_unitary()
@@ -50,10 +49,9 @@ def SZ_pulse(theta):
     '''
     Clear the pulses
     '''
-    NMRsample.add_pulse(pulseSingle(2, 1/2*pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
     NMRsample.add_pulse(pulseSingle(1, theta * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(0, 1/2*pl90C, wC))
-
+    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
 
     NMRsample.evolve_all_pulse()
     matrix = NMRsample.get_pulse_unitary()
@@ -106,10 +104,6 @@ def approx_hadamard_proton_pulse():
     print("(pi/4)Iy--(pi)Ix--(-pi/4)Iy")
     print(matrix)
     return
-
-
-
-
 
 
 def pulse_length_change():
@@ -169,9 +163,9 @@ def approx_CNOT():
     (pi/2)Ix2---(2Iz1Iz2)---(pi/2)Iy2
     Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
     '''
-    NMRsample.add_pulse(pulseSingle(0, 0.5*pl90C, wC))
-    NMRsample.add_pulse(delayTime(1 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(1, 0.5*pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90C, wC))
     '''
     Evolve the density matrix with all pulses
     '''
@@ -256,16 +250,87 @@ def exact_CZ_pulse():
     (pi/2)Iz1---(pi/2)Iz2---(-2)Iz1Iz2
     Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
     '''
-    NMRsample.add_pulse(pulseSingle(2, 1/2*pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(1, 1/2 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 1/2*pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
 
-    NMRsample.add_pulse(pulseSingle(2, 1/2*pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(1, 1/2 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(0, 1/2*pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
+
+    '''
+    The pulse of (-2)Iz1Iz2. The angle theta is actually (-\pi/2). However, since we cannot rotate 
+    a minus angle, we should plus another (4\pi)
+    '''
+    NMRsample.add_pulse(delayTime((4 - 0.5) / Jfreq))
+    '''
+    Evolve the density matrix with all pulses
+    '''
+    NMRsample.evolve_all_pulse()
+    '''
+    Print the unitary of all pulses:
+    '''
+    print(np.exp(np.pi / 4 * 1j) * NMRsample.get_pulse_unitary())
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the spectrum
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/CNOTapproxproton.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/CNOTapproxcarbon.png")
 
 
-    NMRsample.add_pulse(delayTime(1 / Jfreq))
+def exact_CNOT_pulse_Hcontrol():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[0.5, 0, 0, 0],
+                                    [0, 0.3, 0, 0],
+                                    [0, 0, -0.3, 0],
+                                    [0, 0, 0, -0.5]], dtype=complex))
+
+    '''
+    Add pulse sequence for approximate h gate on carbon
+    '''
+    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(0, 1 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90C, wC))
+
+    '''
+    Add pulse sequence for exact CZ gate
+    '''
+    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
+    NMRsample.add_pulse(delayTime((4 - 0.5) / Jfreq))
+
+    '''
+    Add pulse sequence for approximate h gate on carbon
+    '''
+
+    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(0, 1 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90C, wC))
+
     '''
     Evolve the density matrix with all pulses
     '''
@@ -289,13 +354,13 @@ def exact_CZ_pulse():
     Simulate what is shown on the screen
     '''
     NMRsample.show_proton_spectrum_real(-5, 15, store=True,
-                                        path="Figure/CNOTapproxproton.png")
+                                        path="Figure/CNOTExactproton-Hcontrol.png")
 
     NMRsample.show_carbon_spectrum_real(74, 80, store=True,
-                                        path="Figure/CNOTapproxcarbon.png")
+                                        path="Figure/CNOTExactcarbon-Hcontrol.png")
 
 
-def exact_CNOT_pulse():
+def exact_CNOT_pulse_Ccontrol():
     '''
     Initialize the chloroform instance
     '''
@@ -308,6 +373,60 @@ def exact_CNOT_pulse():
                                     [0, 0, -0.3, 0],
                                     [0, 0, 0, -0.5]], dtype=complex))
 
+    '''
+    Add pulse sequence for approximate h gate on carbon
+    '''
+    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(0, 1 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
+
+    '''
+    Add pulse sequence for exact CZ gate
+    '''
+    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
+    NMRsample.add_pulse(delayTime((4 - 0.5) / Jfreq))
+
+    '''
+    Add pulse sequence for approximate h gate on carbon
+    '''
+
+    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(0, 1 * pl90H, wH))
+    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
+
+    '''
+    Evolve the density matrix with all pulses
+    '''
+    NMRsample.evolve_all_pulse()
+    '''
+    Print the unitary of all pulses:
+    '''
+    print(NMRsample.get_pulse_unitary())
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the spectrum
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/CNOTExactproton-Ccontrol.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/CNOTExactcarbon-Ccontrol.png")
+
 
 def P1_pulse():
     return
@@ -319,8 +438,9 @@ def P2_pulse():
 
 if __name__ == "__main__":
     # pulse_length_change()
-    #approx_hadamard_carbon_pulse()
-    #IZ_pulse(0.5)
-    #SZ_pulse(0.3)
-    #approx_CNOT()
-    exact_CZ_pulse()
+    # approx_hadamard_carbon_pulse()
+    # IZ_pulse(0.5)
+    # SZ_pulse(0.3)
+    # approx_CNOT()
+    # exact_CZ_pulse()
+    exact_CNOT_pulse_Ccontrol()

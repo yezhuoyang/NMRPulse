@@ -3,54 +3,54 @@ from params import *
 
 
 def I_matrix():
-    return np.array([[1, 0], [0, 1]])
+    return np.array([[1, 0], [0, 1]], dtype=complex)
 
 
 def Rx_matrix(theta):
     return np.array([[np.cos(theta / 2), -1j * np.sin(theta / 2)],
-                     [-1j * np.sin(theta / 2), np.cos(theta / 2)]])
+                     [-1j * np.sin(theta / 2), np.cos(theta / 2)]], dtype=complex)
 
 
 def Rz_matrix(theta):
     return np.array([[np.exp(-1j * theta / 2), 0],
-                     [0, np.exp(1j * theta / 2)]])
+                     [0, np.exp(1j * theta / 2)]], dtype=complex)
 
 
 def Rx_matrix_first(theta):
     return np.kron(
         np.array([[np.cos(theta / 2), -1j * np.sin(theta / 2)],
-                  [-1j * np.sin(theta / 2), np.cos(theta / 2)]]),
+                  [-1j * np.sin(theta / 2), np.cos(theta / 2)]], dtype=complex),
         I_matrix())
 
 
 def Rx_matrix_second(theta):
     return np.kron(I_matrix(), np.array(
         [[np.cos(theta / 2), -1j * np.sin(theta / 2)],
-         [-1j * np.sin(theta / 2), np.cos(theta / 2)]]))
+         [-1j * np.sin(theta / 2), np.cos(theta / 2)]], dtype=complex))
 
 
 def Ry_matrix(theta):
     return np.array([[np.cos(theta / 2), -1 * np.sin(theta / 2)],
-                     [np.sin(theta / 2), np.cos(theta / 2)]])
+                     [np.sin(theta / 2), np.cos(theta / 2)]], dtype=complex)
 
 
 def Ry_matrix_first(theta):
     return np.kron(np.array([[np.cos(theta / 2), -1 * np.sin(theta / 2)],
-                             [np.sin(theta / 2), np.cos(theta / 2)]]),
+                             [np.sin(theta / 2), np.cos(theta / 2)]],dtype=complex),
                    I_matrix())
 
 
 def Ry_matrix_second(theta):
     return np.kron(I_matrix(),
                    np.array([[np.cos(theta / 2), -1 * np.sin(theta / 2)],
-                             [np.sin(theta / 2), np.cos(theta / 2)]]))
+                             [np.sin(theta / 2), np.cos(theta / 2)]],dtype=complex))
 
 
 def Rzz_matrix(theta):
     return np.array([[np.exp(-1j * theta / 2), 0, 0, 0],
                      [0, np.exp(1j * theta / 2), 0, 0],
                      [0, 0, np.exp(1j * theta / 2), 0],
-                     [0, 0, 0, np.exp(-1j * theta / 2)]])
+                     [0, 0, 0, np.exp(-1j * theta / 2)]],dtype=complex)
 
 
 class pulse:
@@ -203,6 +203,4 @@ class delayTime(pulse):
 
     def get_matrix(self, Jfreq):
         theta = np.pi * Jfreq * self._delaytime
-        print("Jfreq * self._delaytime")
-        print(Jfreq * self._delaytime)
         return Rzz_matrix(theta)
