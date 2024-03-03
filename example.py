@@ -5,6 +5,77 @@ from params import *
 from Pulses import *
 import matplotlib.pyplot as plt
 
+
+def pulse_length_calib_proton():
+    pulses_length_list = np.linspace(0, 1, 20)
+    integra_list = []
+    NMRsample = chloroform()
+    for pulse in pulses_length_list:
+        NMRsample.set_density(np.array([[0.5, 0, 0, 0],
+                                        [0, 0.3, 0, 0],
+                                        [0, 0, -0.3, 0],
+                                        [0, 0, 0, -0.5]], dtype=complex))
+        NMRsample.set_pulses([])
+        '''
+        The first 1/2 pi pulse is added to cancel 
+        the sigmax in the measurement operator.
+        '''
+        NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+        '''
+        This is the actual varying Ix pulse we add in the pulse
+        length calibration 
+        '''
+        NMRsample.add_pulse(pulseSingle(0, pulse * pl90H, wH))
+        NMRsample.evolve_all_pulse()
+        NMRsample.read_proton_time()
+        NMRsample.read_proton_spectrum(normalize=False)
+        integra_list.append(NMRsample.integral_proton_spectrum_real())
+
+    pulses_length_list = [2 * x * pl90H * 10 ** 6 for x in pulses_length_list]
+    plt.scatter(pulses_length_list, integra_list, label="Integral value of proton spectrum")
+    plt.axvline(x=pl90H*10**6, color="red", linestyle="--", label="Measured 90-x pulse for proton")
+    plt.xlabel("Pulse length Time/ microsecond")
+    plt.ylabel("Integral value")
+    plt.legend(fontsize=8)
+    plt.savefig("Figure/protoncalib.png")
+    plt.show()
+
+
+def pulse_length_calib_carbon():
+    pulses_length_list = np.linspace(0, 1, 20)
+    integra_list = []
+    NMRsample = chloroform()
+    for pulse in pulses_length_list:
+        NMRsample.set_density(np.array([[0.5, 0, 0, 0],
+                                        [0, 0.3, 0, 0],
+                                        [0, 0, -0.3, 0],
+                                        [0, 0, 0, -0.5]], dtype=complex))
+        NMRsample.set_pulses([])
+        '''
+        The first 1/2 pi pulse is added to cancel 
+        the sigmax in the measurement operator.
+        '''
+        NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+        '''
+        This is the actual varying Ix pulse we add in the pulse
+        length calibration 
+        '''
+        NMRsample.add_pulse(pulseSingle(0, pulse * pl90C, wC))
+        NMRsample.evolve_all_pulse()
+        NMRsample.read_carbon_time()
+        NMRsample.read_carbon_spectrum(normalize=False)
+        integra_list.append(NMRsample.integral_carbon_spectrum_real())
+
+    pulses_length_list = [2 * x * pl90C * 10 ** 6 for x in pulses_length_list]
+    plt.scatter(pulses_length_list, integra_list, label="Integral value of carbon spectrum")
+    plt.axvline(x=pl90C*10**6, color="red", linestyle="--", label="Measured 90-x pulse for carbon")
+    plt.xlabel("Pulse length Time/ microsecond")
+    plt.ylabel("Integral value")
+    plt.legend(fontsize=8)
+    plt.savefig("Figure/carboncalib.png")
+    plt.show()
+
+
 '''
 Rz(theta)=Rx(-\pi/2)Ry(theta)Rx(\pi/2)
 '''
@@ -443,4 +514,6 @@ if __name__ == "__main__":
     # SZ_pulse(0.3)
     # approx_CNOT()
     # exact_CZ_pulse()
-    exact_CNOT_pulse_Ccontrol()
+    # exact_CNOT_pulse_Ccontrol()
+    #pulse_length_calib_carbon()
+    pulse_length_calib_proton()

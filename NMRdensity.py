@@ -139,7 +139,7 @@ class chloroform:
         matrix_dag = np.transpose(matrix_dag)
         new_rho = np.matmul(new_rho, matrix_dag)
         self._density = new_rho
-        #print(self._density)
+        # print(self._density)
 
     def evolve_all_pulse(self):
         if self._pulses_evolved:
@@ -167,7 +167,7 @@ class chloroform:
             self._proton_time_domain.append(self.measure_proton(t))
         return self._proton_time_domain
 
-    def read_proton_spectrum(self):
+    def read_proton_spectrum(self, normalize=True):
 
         fft_result = np.fft.fft(self._proton_time_domain)
         fft_freq = np.fft.fftfreq(self._Npoints, self._dwell)
@@ -189,10 +189,11 @@ class chloroform:
         '''
         Normalize the spectrum by integral value
         '''
-        integral_real = abs(np.trapz(self._proton_freq_ppm, abs(np.real(self._proton_freq_domain))))
-        integral_imag = abs(np.trapz(self._proton_freq_ppm, abs(np.imag(self._proton_freq_domain))))
-        self._proton_freq_domain = np.real(self._proton_freq_domain) / integral_real + 1j*np.imag(
-            self._proton_freq_domain) / integral_imag
+        if normalize:
+            integral_real = abs(np.trapz(self._proton_freq_ppm, abs(np.real(self._proton_freq_domain))))
+            integral_imag = abs(np.trapz(self._proton_freq_ppm, abs(np.imag(self._proton_freq_domain))))
+            self._proton_freq_domain = np.real(self._proton_freq_domain) / integral_real + 1j * np.imag(
+                self._proton_freq_domain) / integral_imag
 
         return self._proton_freq_ppm, self._proton_freq_domain
 
@@ -202,7 +203,7 @@ class chloroform:
             self._carbon_time_domain.append(self.measure_Carbon(t))
         return self._carbon_time_domain
 
-    def read_carbon_spectrum(self):
+    def read_carbon_spectrum(self, normalize=True):
 
         fft_result = np.fft.fft(self._carbon_time_domain)
         fft_freq = np.fft.fftfreq(self._Npoints, self._dwell)
@@ -224,10 +225,11 @@ class chloroform:
         '''
         Normalize the spectrum by integral value
         '''
-        integral_real = abs(np.trapz(self._carbon_freq_ppm, abs(np.real(self._carbon_freq_domain))))
-        integral_imag = abs(np.trapz(self._carbon_freq_ppm, abs(np.imag(self._carbon_freq_domain))))
-        self._carbon_freq_domain = np.real(self._carbon_freq_domain) / integral_real + 1j*np.imag(
-            self._carbon_freq_domain) / integral_imag
+        if normalize:
+            integral_real = abs(np.trapz(self._carbon_freq_ppm, abs(np.real(self._carbon_freq_domain))))
+            integral_imag = abs(np.trapz(self._carbon_freq_ppm, abs(np.imag(self._carbon_freq_domain))))
+            self._carbon_freq_domain = np.real(self._carbon_freq_domain) / integral_real + 1j * np.imag(
+                self._carbon_freq_domain) / integral_imag
 
         return self._carbon_freq_ppm, self._carbon_freq_domain
 
@@ -240,16 +242,16 @@ class chloroform:
         return np.trace(np.matmul(self._density, Mp)) * np.exp(-t / self._T2starp)
 
     def integral_proton_spectrum_real(self):
-        return np.trapz(self._proton_freq_ppm, np.real(self._proton_freq_domain))
+        return abs(np.trapz(self._proton_freq_ppm, abs(np.real(self._proton_freq_domain))))
 
     def integral_proton_spectrum_imag(self):
-        return np.trapz(self._proton_freq_ppm, np.imag(self._proton_freq_domain))
+        return abs(np.trapz(self._proton_freq_ppm, abs(np.imag(self._proton_freq_domain))))
 
     def integral_carbon_spectrum_real(self):
-        return np.trapz(self._carbon_freq_ppm, np.real(self._carbon_freq_domain))
+        return abs(np.trapz(self._carbon_freq_ppm, abs(np.real(self._carbon_freq_domain))))
 
     def integral_carbon_spectrum_imag(self):
-        return np.trapz(self._carbon_freq_ppm, np.imag(self._carbon_freq_domain))
+        return abs(np.trapz(self._carbon_freq_ppm, abs(np.imag(self._carbon_freq_domain))))
 
     def measure_Carbon(self, t):
         MC = self.MC_matrix(t)
