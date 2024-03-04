@@ -4,6 +4,7 @@ from qiskit_aer import AerSimulator
 from NMRdensity import *
 from Pulses import *
 from typing import List, Union, Any
+from qiskit.visualization import plot_histogram
 
 
 class NMRalgorithm:
@@ -30,18 +31,18 @@ class NMRalgorithm:
         self.perm_index_value = value
 
     def add_p1_perm_pulse(self):
-        self.NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
-        self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-        self.NMRsample.add_pulse(pulseTwo(1, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
-        self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-        self.NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90C, wC))
-
-    def add_p2_perm_pulse(self):
         self.NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
         self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-        self.NMRsample.add_pulse(pulseTwo(1, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
+        self.NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
         self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-        self.NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90H, wH))
+        self.NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
+
+    def add_p2_perm_pulse(self):
+        self.NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+        self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+        self.NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
+        self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+        self.NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
 
     def add_X_gate_first_pulse(self):
         self.NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
@@ -113,6 +114,9 @@ class NMRalgorithm:
             self.NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
             self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
             self.NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
+
+    def plot_measure_all(self):
+        raise NotImplementedError
 
     def get_final_density(self):
         return self.NMRsample.get_density()
@@ -227,6 +231,58 @@ class Djalgorithm(NMRalgorithm):
                     self.add_H_gate_first_pulse()
         return
 
+    def plot_measure_all(self):
+        self.circuit.clear()
+        self.circuit.x(1)
+        self.circuit.h(list(range(0, 2)))
+        self.compile_uf_circuit()
+        self.circuit.h(list(range(0, 2)))
+
+        self.circuit.measure_all()
+
+        # Use Aer's qasm_simulator
+        simulator = self.simulator
+
+        # Execute the circuit on the qasm simulator
+        job = qiskit.execute(self.circuit, simulator, shots=1000)
+
+        # Grab results from the job
+        result = job.result()
+
+        # Returns counts with suffix in keys
+        counts_with_suffix = result.get_counts(self.circuit)
+
+        # Remove suffix and sum counts if necessary
+        counts = {}
+        for key_with_suffix, count in counts_with_suffix.items():
+            key = key_with_suffix.split()[0]  # Assumes suffix is after a space and we only want the first part
+            if key in counts:
+                counts[key] += count
+            else:
+                counts[key] = count
+
+
+        # Calculate probabilities
+        probabilities = {state: count / 1000 for state, count in counts.items()}
+
+        print("Prob!")
+        print(probabilities)
+
+        # Ensure all possible outcomes are present in the probabilities dictionary
+        for state in ['00', '01', '10', '11']:
+            if state not in probabilities:
+                probabilities[state] = 0
+
+        # Sorting states to ensure consistent order
+        sorted_states = sorted(probabilities.keys())
+        sorted_probs = [probabilities[state] for state in sorted_states]
+
+        # Plotting using matplotlib
+        plt.bar(sorted_states, sorted_probs)
+        plt.xlabel('State')
+        plt.ylabel('Probability')
+        plt.title('Probabilities of Measuring Qubit States')
+        plt.show()
 
 class Grover(NMRalgorithm):
 
@@ -377,6 +433,8 @@ def permute_DJ(uf):
     DJ.construct_circuit()
     DJ.calculate_result_circuit()
 
+    DJ.plot_measure_all()
+
     '''
     First, calculate the result without permutation
     '''
@@ -489,5 +547,5 @@ def permute_grover(db):
 
 
 if __name__ == "__main__":
-    # permute_DJ([0, 1])
-    permute_grover([0, 0])
+    permute_DJ([0, 1])
+    #permute_grover([0, 0])

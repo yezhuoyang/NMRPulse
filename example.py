@@ -231,7 +231,6 @@ def approx_CNOT():
                                     [0, 0, 0, -0.5]], dtype=complex))
     '''
 
-
     NMRsample.set_thermal_equilibrium()
 
     '''
@@ -526,9 +525,8 @@ def Xgate_proton():
     '''
     NMRsample.evolve_all_pulse()
 
-    matrix=NMRsample.get_pulse_unitary()
+    matrix = NMRsample.get_pulse_unitary()
     print(matrix)
-
 
     '''
     Read the data signal in the time domain
@@ -574,9 +572,8 @@ def Xgate_carbon():
     '''
     NMRsample.evolve_all_pulse()
 
-    matrix=NMRsample.get_pulse_unitary()
+    matrix = NMRsample.get_pulse_unitary()
     print(matrix)
-
 
     '''
     Read the data signal in the time domain
@@ -620,12 +617,13 @@ def P1_pulse():
     '''
 
 
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseTwo(1, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90C, wC))
 
+
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
 
     '''
     Evolve the density matrix with all pulses
@@ -676,12 +674,12 @@ def P2_pulse():
     Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
     '''
 
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseTwo(1, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90H, wH))
 
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
 
     '''
     Evolve the density matrix with all pulses
@@ -713,6 +711,62 @@ def P2_pulse():
     return
 
 
+def pseudo_pure_state():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+
+    NMRsample.set_thermal_equilibrium()
+
+    density0 = NMRsample.get_density()
+
+    '''
+    Add P1 permutation
+    '''
+
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
+
+    NMRsample.evolve_all_pulse()
+
+    np.set_printoptions(precision=2)
+    print("P1 matrix")
+    print(NMRsample.get_pulse_unitary())
+
+    density1 = NMRsample.get_density()
+
+    NMRsample.set_thermal_equilibrium()
+    NMRsample.set_pulses([])
+
+    '''
+    Add P2 permutation
+    '''
+
+    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
+    NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
+
+
+
+
+    NMRsample.evolve_all_pulse()
+
+    print("P2 matrix")
+    print(NMRsample.get_pulse_unitary())
+
+    density2 = NMRsample.get_density()
+
+    pseudo_pure_density = (density0 + density1 + density2) / 3
+
+    print(pseudo_pure_density)
+
+
 if __name__ == "__main__":
     # pulse_length_change()
     # approx_hadamard_carbon_pulse()
@@ -723,9 +777,10 @@ if __name__ == "__main__":
     # exact_CNOT_pulse_Ccontrol()
     # pulse_length_calib_carbon()
     # pulse_length_calib_proton()
-    #P1_pulse()
+    # P1_pulse()
 
-    #Xgate_proton()
-    #Xgate_carbon()
+    # Xgate_proton()
+    # Xgate_carbon()
 
-    approx_CNOT()
+    # approx_CNOT()
+    pseudo_pure_state()
