@@ -224,10 +224,15 @@ def approx_CNOT():
     '''
     Set the initial density matrix
     '''
+    '''
     NMRsample.set_density(np.array([[0.5, 0, 0, 0],
                                     [0, 0.3, 0, 0],
                                     [0, 0, -0.3, 0],
                                     [0, 0, 0, -0.5]], dtype=complex))
+    '''
+
+
+    NMRsample.set_thermal_equilibrium()
 
     '''
     Add approximate CNOT pulse sequence
@@ -236,7 +241,7 @@ def approx_CNOT():
     '''
     NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
     NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(1, 0.5 * pl90C, wC))
+    NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
     '''
     Evolve the density matrix with all pulses
     '''
@@ -721,4 +726,6 @@ if __name__ == "__main__":
     #P1_pulse()
 
     #Xgate_proton()
-    Xgate_carbon()
+    #Xgate_carbon()
+
+    approx_CNOT()

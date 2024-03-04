@@ -84,14 +84,18 @@ class chloroform:
     def get_times(self):
         return self._times
 
-
     '''
     Calculate the thermal equilibrium density density matrix 
     '''
+
     def thermal_equilibrium_density(self):
-        return
+        thermal_density = 1 / 4 * np.identity(4, dtype=complex) + 10 ** (-4) * np.array(
+            [[5, 0, 0, 0], [0, 3, 0, 0], [0, 0, -3, 0], [0, 0, 0, -5]], dtype=complex)
 
+        return thermal_density
 
+    def set_thermal_equilibrium(self):
+        self._density = self.thermal_equilibrium_density()
 
     def reset_proton_params(self,
                             T1p,
@@ -284,7 +288,7 @@ class chloroform:
                       )
         return MC
 
-    def show_proton_fid_real(self, maxtime, store=False, path=None, miny=-1,maxy=1):
+    def show_proton_fid_real(self, maxtime, store=False, path=None, miny=-1, maxy=1):
         plt.plot(self._times, np.real(self._proton_time_domain), label="Proton test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)
@@ -294,7 +298,7 @@ class chloroform:
             plt.savefig(path)
         plt.show()
 
-    def show_proton_fid_imag(self, maxtime, store=False, path=None, miny=-1,maxy=1):
+    def show_proton_fid_imag(self, maxtime, store=False, path=None, miny=-1, maxy=1):
         plt.plot(self._times, np.imag(self._proton_time_domain), label="Proton test_fid.py(Imaginary part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)
@@ -324,7 +328,7 @@ class chloroform:
             plt.savefig(path)
         plt.show()
 
-    def show_carbon_fid_real(self, maxtime, store=False, path=None, miny=-1,maxy=1):
+    def show_carbon_fid_real(self, maxtime, store=False, path=None, miny=-1, maxy=1):
         plt.plot(self._times, np.real(self._carbon_time_domain), label="Carbon test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)
@@ -334,7 +338,7 @@ class chloroform:
             plt.savefig(path)
         plt.show()
 
-    def show_carbon_fid_imag(self, maxtime, store=False, path=None, miny=-1,maxy=1):
+    def show_carbon_fid_imag(self, maxtime, store=False, path=None, miny=-1, maxy=1):
         plt.plot(self._times, np.real(self._carbon_freq_domain), label="Carbon test_fid.py(Imaginary part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)
