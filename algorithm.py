@@ -261,7 +261,6 @@ class Djalgorithm(NMRalgorithm):
             else:
                 counts[key] = count
 
-
         # Calculate probabilities
         probabilities = {state: count / 1000 for state, count in counts.items()}
 
@@ -283,6 +282,7 @@ class Djalgorithm(NMRalgorithm):
         plt.ylabel('Probability')
         plt.title('Probabilities of Measuring Qubit States')
         plt.show()
+
 
 class Grover(NMRalgorithm):
 
@@ -546,6 +546,10 @@ def permute_grover(db):
                                             path="Figure/Grovercarbon%d%d.png" % (db[0], db[1]))
 
 
+def DJ_print_pulse():
+    return
+
+
 if __name__ == "__main__":
     permute_DJ([0, 1])
-    #permute_grover([0, 0])
+    # permute_grover([0, 0])

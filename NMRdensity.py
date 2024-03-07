@@ -368,6 +368,11 @@ class chloroform:
             plt.savefig(path)
         plt.show()
 
+    def print_pulses(self):
+        print("initpp(dir)")
+        for pulse in self._pulses:
+            print(pulse)
+        print("parList=endpp()")
 
 import matplotlib.pyplot as plt
 

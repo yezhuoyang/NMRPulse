@@ -616,9 +616,6 @@ def P1_pulse():
     Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
     '''
 
-
-
-
     NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
     NMRsample.add_pulse(delayTime(0.5 / Jfreq))
     NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
@@ -652,6 +649,10 @@ def P1_pulse():
 
     NMRsample.show_carbon_spectrum_real(74, 80, store=True,
                                         path="Figure/P1carbon.png")
+
+
+
+    NMRsample.print_pulses()
     return
 
 
@@ -673,7 +674,6 @@ def P2_pulse():
     (pi/2)Ix2---(2Iz1Iz2)---(pi/2)Iy2
     Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
     '''
-
 
     NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
     NMRsample.add_pulse(delayTime(0.5 / Jfreq))
@@ -752,9 +752,6 @@ def pseudo_pure_state():
     NMRsample.add_pulse(delayTime(0.5 / Jfreq))
     NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
 
-
-
-
     NMRsample.evolve_all_pulse()
 
     print("P2 matrix")
@@ -765,6 +762,142 @@ def pseudo_pure_state():
     pseudo_pure_density = (density0 + density1 + density2) / 3
 
     print(pseudo_pure_density)
+
+
+def spectrum_only_a():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[1, 0, 0, 0],
+                                    [0, 0, 0, 0],
+                                    [0, 0, 0, 0],
+                                    [0, 0, 0, 0]], dtype=complex))
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the spectrum
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/proton-spectruma.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/carbon-spectruma.png")
+    return
+
+
+def spectrum_only_b():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[0, 0, 0, 0],
+                                    [0, 1, 0, 0],
+                                    [0, 0, 0, 0],
+                                    [0, 0, 0, 0]], dtype=complex))
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the spectrum
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/proton-spectrumb.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/carbon-spectrumb.png")
+    return
+
+
+def spectrum_only_c():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[0, 0, 0, 0],
+                                    [0, 0, 0, 0],
+                                    [0, 0, 1, 0],
+                                    [0, 0, 0, 0]], dtype=complex))
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the spectrum
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/proton-spectrumc.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/carbon-spectrumc.png")
+    return
+
+
+def spectrum_only_d():
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+    '''
+    Set the initial density matrix
+    '''
+    NMRsample.set_density(np.array([[0, 0, 0, 0],
+                                    [0, 0, 0, 0],
+                                    [0, 0, 0, 0],
+                                    [0, 0, 0, 1]], dtype=complex))
+
+    '''
+    Read the data signal in the time domain
+    '''
+    NMRsample.read_proton_time()
+    NMRsample.read_carbon_time()
+    '''
+    Read the spectrum
+    '''
+    NMRsample.read_proton_spectrum()
+    NMRsample.read_carbon_spectrum()
+    '''
+    Simulate what is shown on the screen
+    '''
+    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                        path="Figure/proton-spectrumd.png")
+
+    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                        path="Figure/carbon-spectrumd.png")
+    return
 
 
 if __name__ == "__main__":
@@ -783,4 +916,10 @@ if __name__ == "__main__":
     # Xgate_carbon()
 
     # approx_CNOT()
-    pseudo_pure_state()
+    #pseudo_pure_state()
+    #spectrum_only_a()
+    #spectrum_only_b()
+    #spectrum_only_c()
+    #spectrum_only_d()
+
+    P1_pulse()

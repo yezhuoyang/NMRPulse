@@ -61,6 +61,9 @@ class pulse:
     def get_matrix(self, *params):
         raise NotImplementedError
 
+    def __str__(self):
+        raise NotImplementedError
+
 
 '''
 Single qubit NMR pulse
@@ -116,6 +119,17 @@ class pulseSingle(pulse):
                 return Ry_matrix_second(-theta)
             else:
                 return Ry_matrix_first(-theta)
+
+    '''
+    Print the string format of the pulse sequence
+    '''
+    def __str__(self):
+        if self._is_carbon:
+            return "pulse(2,a90C,{},{}d90C)".format(self._channel, (self._length / pl90C))
+        else:
+            return "pulse(1,a90H,{},{}d90H)".format(self._channel, (self._length / pl90H))
+
+
 
 
 '''
@@ -189,6 +203,9 @@ class pulseTwo(pulse):
         else:
             return np.kron(matrix2, matrix1)
 
+    def __str__(self):
+        return "pulse(2,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel1,self._channel2)
+
 
 class delayTime(pulse):
     '''
@@ -204,3 +221,7 @@ class delayTime(pulse):
     def get_matrix(self, Jfreq):
         theta = np.pi * Jfreq * self._delaytime
         return Rzz_matrix(theta)
+
+    def __str__(self):
+        return "delay({:.2f})".format(self._delaytime*10**(3))
+
