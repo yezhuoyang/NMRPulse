@@ -137,6 +137,9 @@ class NMRalgorithm:
     def calculate_result(self):
         raise NotImplementedError
 
+    def print_pulses(self):
+        self.NMRsample.print_pulses()
+
 
 class Djalgorithm(NMRalgorithm):
 
@@ -244,7 +247,7 @@ class Djalgorithm(NMRalgorithm):
         simulator = self.simulator
 
         # Execute the circuit on the qasm simulator
-        job = qiskit.execute(self.circuit, simulator, shots=1000)
+        job = qiskit.execute(self.circuit, simulator, shots=5000)
 
         # Grab results from the job
         result = job.result()
@@ -262,7 +265,7 @@ class Djalgorithm(NMRalgorithm):
                 counts[key] = count
 
         # Calculate probabilities
-        probabilities = {state: count / 1000 for state, count in counts.items()}
+        probabilities = {state: count / 5000 for state, count in counts.items()}
 
         print("Prob!")
         print(probabilities)
@@ -280,7 +283,8 @@ class Djalgorithm(NMRalgorithm):
         plt.bar(sorted_states, sorted_probs)
         plt.xlabel('State')
         plt.ylabel('Probability')
-        plt.title('Probabilities of Measuring Qubit States')
+        plt.title('Measurement result of DJ for f{}{}'.format(self.UF[0], self.UF[1]))
+        plt.savefig("Figure/DJSimu{}{}".format(self.UF[0], self.UF[1]))
         plt.show()
 
 
@@ -301,7 +305,11 @@ class Grover(NMRalgorithm):
         self._solution = -1
         self._succeed = False
 
+    def set_grover_step(self, value):
+        self.grover_step = value
+
     def construct_circuit(self):
+        self.circuit.x(1)
         self.circuit.h(list(range(0, 2)))
         '''
         Construct grover circuit many times
@@ -316,6 +324,7 @@ class Grover(NMRalgorithm):
             self.add_p1_perm_pulse()
         elif self.perm_index_value == 2:
             self.add_p2_perm_pulse()
+        self.add_X_gate_second_pulse()
         self.add_H_gate_first_pulse()
         self.add_H_gate_second_pulse()
         for i in range(self.grover_step):
@@ -395,20 +404,16 @@ class Grover(NMRalgorithm):
         return
 
     def construct_zo_circuit(self):
-        self.circuit.x(0)
         self.circuit.cz(0, 1)
-        self.circuit.x(0)
 
     def construct_zo_pulse(self):
-        self.add_X_gate_first_pulse()
         self.add_CZ_pulse()
-        self.add_X_gate_first_pulse()
 
     def construct_grover_op_circuit(self):
         self.construct_zf_circuit()
-        self.circuit.h(list(range(0, 1)))
+        self.circuit.h(list(range(0, 2)))
         self.construct_zo_circuit()
-        self.circuit.h(list(range(0, 1)))
+        self.circuit.h(list(range(0, 2)))
         return
 
     def construct_grover_op_pulse(self):
@@ -424,6 +429,63 @@ class Grover(NMRalgorithm):
                      database: List):
         assert len(database) == 2
         self._database = database
+
+    def plot_measure_all(self):
+        self.circuit.clear()
+        self.circuit.x(1)
+        self.circuit.h(list(range(0, 2)))
+        '''
+        Construct grover circuit many times
+        '''
+        for i in range(self.grover_step):
+            self.construct_grover_op_circuit()
+
+        self.circuit.measure_all()
+
+        # Use Aer's qasm_simulator
+        simulator = self.simulator
+
+        # Execute the circuit on the qasm simulator
+        job = qiskit.execute(self.circuit, simulator, shots=5000)
+
+        # Grab results from the job
+        result = job.result()
+
+        # Returns counts with suffix in keys
+        counts_with_suffix = result.get_counts(self.circuit)
+
+        # Remove suffix and sum counts if necessary
+        counts = {}
+        for key_with_suffix, count in counts_with_suffix.items():
+            key = key_with_suffix.split()[0]  # Assumes suffix is after a space and we only want the first part
+            if key in counts:
+                counts[key] += count
+            else:
+                counts[key] = count
+
+        # Calculate probabilities
+        probabilities = {state: count / 5000 for state, count in counts.items()}
+
+        print("Prob!")
+        print(probabilities)
+
+        # Ensure all possible outcomes are present in the probabilities dictionary
+        for state in ['00', '01', '10', '11']:
+            if state not in probabilities:
+                probabilities[state] = 0
+
+        # Sorting states to ensure consistent order
+        sorted_states = sorted(probabilities.keys())
+        sorted_probs = [probabilities[state] for state in sorted_states]
+
+        # Plotting using matplotlib
+        plt.bar(sorted_states, sorted_probs)
+        plt.xlabel('State')
+        plt.ylabel('Probability')
+        plt.title('Measurement result of Grover for f{}{}(Grover Step:{})'.format(self._database[0], self._database[1],
+                                                                                  self.grover_step))
+        plt.savefig("Figure/GroverSimu{}{}".format(self._database[0], self._database[1]))
+        plt.show()
 
 
 def permute_DJ(uf):
@@ -546,10 +608,30 @@ def permute_grover(db):
                                             path="Figure/Grovercarbon%d%d.png" % (db[0], db[1]))
 
 
-def DJ_print_pulse():
-    return
+def DJ_print_pulse(uf):
+    DJ = Djalgorithm()
+    DJ.set_function(uf)
+
+    DJ.construct_pulse()
+
+    DJ.print_pulses()
 
 
 if __name__ == "__main__":
-    permute_DJ([0, 1])
-    # permute_grover([0, 0])
+    grover = Grover()
+
+    grover.set_grover_step(1)
+
+    grover.set_function([1, 0])
+
+    grover.plot_measure_all()
+
+    '''
+    DJ = Djalgorithm()
+    DJ.set_function([1, 0])
+
+    DJ.construct_circuit()
+    DJ.calculate_result_circuit()
+
+    DJ.plot_measure_all()
+    '''
