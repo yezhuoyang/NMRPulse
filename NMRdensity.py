@@ -1,5 +1,5 @@
 import numpy as np
-from Pulses import pulse, pulseSingle, pulseTwo, delayTime
+from Pulses import pulse, pulseSingle, pulseTwo, delayTime,BarrierPulse
 from params import *
 
 
@@ -159,6 +159,9 @@ class chloroform:
             return
         self._pulse_unitary = np.identity(4, dtype=complex)
         for pulse in self._pulses:
+            if isinstance(pulse,BarrierPulse):
+                continue
+
             if isinstance(pulse, pulseSingle):
                 matrix = pulse.get_matrix(self._pl90H, self._pl90C)
                 self._pulse_unitary = np.matmul(matrix, self._pulse_unitary)
@@ -514,6 +517,7 @@ class chloroform:
         print("initpp(dir)")
         for pulse in self._pulses:
             print(pulse)
+        print("--------------------------------")
         print("parList=endpp()")
 
 

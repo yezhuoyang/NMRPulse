@@ -65,6 +65,18 @@ class pulse:
         raise NotImplementedError
 
 
+class BarrierPulse(pulse):
+
+    def __init__(self, name):
+        self.name = name
+
+    def get_matrix(self, *params):
+        raise NotImplementedError
+
+    def __str__(self):
+        return "----Pulse for {} gate:------".format(self.name)
+
+
 '''
 Single qubit NMR pulse
 '''
@@ -123,13 +135,12 @@ class pulseSingle(pulse):
     '''
     Print the string format of the pulse sequence
     '''
+
     def __str__(self):
         if self._is_carbon:
             return "pulse(2,a90C,{},{}d90C)".format(self._channel, (self._length / pl90C))
         else:
             return "pulse(1,a90H,{},{}d90H)".format(self._channel, (self._length / pl90H))
-
-
 
 
 '''
@@ -204,7 +215,7 @@ class pulseTwo(pulse):
             return np.kron(matrix2, matrix1)
 
     def __str__(self):
-        return "pulse(2,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel1,self._channel2)
+        return "pulse(2,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel1, self._channel2)
 
 
 class delayTime(pulse):
@@ -223,5 +234,4 @@ class delayTime(pulse):
         return Rzz_matrix(theta)
 
     def __str__(self):
-        return "delay({:.2f})".format(self._delaytime*10**(3))
-
+        return "delay({:.2f})".format(self._delaytime * 10 ** (3))

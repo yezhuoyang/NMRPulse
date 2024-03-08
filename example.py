@@ -318,28 +318,7 @@ def exact_CNOT_pulse_Hcontrol():
     '''
     Add pulse sequence for approximate h gate on carbon
     '''
-    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(0, 1 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90C, wC))
-
-    '''
-    Add pulse sequence for exact CZ gate
-    '''
-    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
-    NMRsample.add_pulse(delayTime((4 - 0.5) / Jfreq))
-
-    '''
-    Add pulse sequence for approximate h gate on carbon
-    '''
-
-    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(0, 1 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90C, wC))
+    NMRsample.add_CNOT_pulse(approximate=False,Hcontrol=True)
 
     '''
     Evolve the density matrix with all pulses
@@ -369,31 +348,8 @@ def exact_CNOT_pulse_Ccontrol():
                                     [0, 0, -0.3, 0],
                                     [0, 0, 0, -0.5]], dtype=complex))
 
-    '''
-    Add pulse sequence for approximate h gate on carbon
-    '''
-    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 1 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
 
-    '''
-    Add pulse sequence for exact CZ gate
-    '''
-    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
-    NMRsample.add_pulse(delayTime((4 - 0.5) / Jfreq))
-
-    '''
-    Add pulse sequence for approximate h gate on carbon
-    '''
-
-    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 1 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
+    NMRsample.add_CNOT_pulse(approximate=False,Hcontrol=False)
 
     '''
     Evolve the density matrix with all pulses

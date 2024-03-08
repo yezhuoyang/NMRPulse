@@ -30,30 +30,37 @@ class NMRalgorithm:
     def set_prem_value(self, value):
         self.perm_index_value = value
 
-
     def add_p1_perm_pulse(self):
+        self.NMRsample.add_pulse(BarrierPulse(name="P1"))
         self.NMRsample.add_p1_perm_pulse()
 
     def add_p2_perm_pulse(self):
+        self.NMRsample.add_pulse(BarrierPulse(name="P2"))
         self.NMRsample.add_p2_perm_pulse()
 
     def add_X_gate_first_pulse(self):
+        self.NMRsample.add_pulse(BarrierPulse(name="X1"))
         self.NMRsample.add_X_gate_first_pulse()
 
     def add_X_gate_second_pulse(self):
+        self.NMRsample.add_pulse(BarrierPulse(name="X2"))
         self.NMRsample.add_X_gate_second_pulse()
 
     def add_H_gate_first_pulse(self):
-        self.NMRsample.add_H_gate_first_pulse()
+        self.NMRsample.add_pulse(BarrierPulse(name="H1"))
+        self.NMRsample.add_H_gate_first_pulse(approximate=self.approximate)
 
     def add_H_gate_second_pulse(self):
-        self.NMRsample.add_H_gate_second_pulse()
+        self.NMRsample.add_pulse(BarrierPulse(name="H2"))
+        self.NMRsample.add_H_gate_second_pulse(approximate=self.approximate)
 
     def add_CZ_pulse(self):
-        self.NMRsample.add_CZ_pulse(self.approximate)
+        self.NMRsample.add_pulse(BarrierPulse(name="CZ(H,C)"))
+        self.NMRsample.add_CZ_pulse(approximate=self.approximate, Hcontrol=True)
 
     def add_CNOT_pulse(self):
-        self.NMRsample.add_CNOT_pulse(self.approximate)
+        self.NMRsample.add_pulse(BarrierPulse(name="CNOT(H,C)"))
+        self.NMRsample.add_CNOT_pulse(approximate=self.approximate, Hcontrol=True)
 
     def plot_measure_all(self):
         raise NotImplementedError
@@ -463,7 +470,8 @@ def permute_DJ(uf):
     DJ.construct_pulse()
     DJ.calculate_result_pulse()
 
-    DJ.show_spectrum("Figure/DJP0f{}{}".format(uf[0], uf[1]), title="Result of DJ algorithm after P0 for f{}{}".format(uf[0], uf[1]))
+    DJ.show_spectrum("Figure/DJP0f{}{}".format(uf[0], uf[1]),
+                     title="Result of DJ algorithm after P0 for f{}{}".format(uf[0], uf[1]))
 
     density0 = DJ.get_final_density()
 
@@ -476,7 +484,8 @@ def permute_DJ(uf):
     DJ.construct_pulse()
     DJ.calculate_result_pulse()
 
-    DJ.show_spectrum("Figure/DJP1f{}{}".format(uf[0], uf[1]), title="Result of DJ algorithm after P1 for f{}{}".format(uf[0], uf[1]))
+    DJ.show_spectrum("Figure/DJP1f{}{}".format(uf[0], uf[1]),
+                     title="Result of DJ algorithm after P1 for f{}{}".format(uf[0], uf[1]))
 
     density1 = DJ.get_final_density()
 
@@ -489,8 +498,8 @@ def permute_DJ(uf):
     DJ.construct_pulse()
     DJ.calculate_result_pulse()
 
-    DJ.show_spectrum("Figure/DJP2f{}{}".format(uf[0], uf[1]), title="Result of DJ algorithm after P2 for f{}{}".format(uf[0], uf[1]))
-
+    DJ.show_spectrum("Figure/DJP2f{}{}".format(uf[0], uf[1]),
+                     title="Result of DJ algorithm after P2 for f{}{}".format(uf[0], uf[1]))
 
     density2 = DJ.get_final_density()
 
@@ -529,8 +538,8 @@ def permute_grover(db):
     grover.construct_pulse()
     grover.calculate_result_pulse()
 
-
-    grover.show_spectrum("Figure/GroverP0f{}{}".format(db[0], db[1]), title="Result of Grover algorithm after P0 for f{}{}".format(db[0], db[1]))
+    grover.show_spectrum("Figure/GroverP0f{}{}".format(db[0], db[1]),
+                         title="Result of Grover algorithm after P0 for f{}{}".format(db[0], db[1]))
 
     density0 = grover.get_final_density()
 
@@ -543,7 +552,8 @@ def permute_grover(db):
     grover.construct_pulse()
     grover.calculate_result_pulse()
 
-    grover.show_spectrum("Figure/GroverP1f{}{}".format(db[0], db[1]), title="Result of Grover algorithm after P1 for f{}{}".format(db[0], db[1]))
+    grover.show_spectrum("Figure/GroverP1f{}{}".format(db[0], db[1]),
+                         title="Result of Grover algorithm after P1 for f{}{}".format(db[0], db[1]))
 
     density1 = grover.get_final_density()
 
@@ -556,7 +566,8 @@ def permute_grover(db):
     grover.construct_pulse()
     grover.calculate_result_pulse()
 
-    grover.show_spectrum("Figure/GroverP2f{}{}".format(db[0], db[1]), title="Result of Grover algorithm after P2 for f{}{}".format(db[0], db[1]))
+    grover.show_spectrum("Figure/GroverP2f{}{}".format(db[0], db[1]),
+                         title="Result of Grover algorithm after P2 for f{}{}".format(db[0], db[1]))
 
     density2 = grover.get_final_density()
 
@@ -592,10 +603,10 @@ def DJ_print_pulse(uf):
 
 
 if __name__ == "__main__":
-    #permute_DJ([0, 0])
-    #permute_DJ([0, 1])
-    #permute_DJ([1, 0])
-    #permute_DJ([1, 1])
+    # permute_DJ([0, 0])
+    # permute_DJ([0, 1])
+    # permute_DJ([1, 0])
+    # permute_DJ([1, 1])
     '''
     grover = Grover()
 
@@ -605,12 +616,10 @@ if __name__ == "__main__":
 
     grover.plot_measure_all()
     '''
-    #permute_grover([0,0])
-    #permute_DJ([0, 1])
-    permute_DJ([1, 0])
-    #permute_DJ([1, 1])
-
-
+    # permute_grover([0,0])
+    # permute_DJ([0, 1])
+    #permute_DJ([1, 0])
+    # permute_DJ([1, 1])
 
     '''
     DJ = Djalgorithm()
@@ -621,3 +630,4 @@ if __name__ == "__main__":
 
     DJ.plot_measure_all()
     '''
+    DJ_print_pulse([1,0])
