@@ -180,6 +180,121 @@ class chloroform:
             self._proton_time_domain.append(self.measure_proton(t))
         return self._proton_time_domain
 
+    def add_p1_perm_pulse(self):
+        self.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+        self.add_pulse(delayTime(0.5 / Jfreq))
+        self.add_pulse(pulseTwo(3, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
+        self.add_pulse(delayTime(0.5 / Jfreq))
+        self.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
+
+    def add_p2_perm_pulse(self):
+        self.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+        self.add_pulse(delayTime(0.5 / Jfreq))
+        self.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
+        self.add_pulse(delayTime(0.5 / Jfreq))
+        self.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
+
+    def add_X_gate_first_pulse(self):
+        self.add_pulse(pulseSingle(0, pl90H, wH))
+
+    def add_X_gate_second_pulse(self):
+        self.add_pulse(pulseSingle(0, pl90C, wC))
+
+    def add_H_gate_first_pulse(self, approximate=False):
+        if not approximate:
+            self.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
+            self.add_pulse(pulseSingle(0, 1 * pl90H, wH))
+            self.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
+        else:
+            self.add_pulse(pulseSingle(3, 1 / 2 * pl90H, wH))
+
+    def add_H_gate_second_pulse(self, approximate=False):
+        if not approximate:
+            self.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
+            self.add_pulse(pulseSingle(0, 1 * pl90C, wC))
+            self.add_pulse(pulseSingle(3, 1 / 4 * pl90C, wC))
+        else:
+            self.add_pulse(pulseSingle(3, 1 / 2 * pl90C, wC))
+
+    def add_CZ_pulse(self, approximate=False, Hcontrol=True):
+        if not approximate:
+            if Hcontrol:
+                '''
+                Add pulse sequence for exact CZ gate
+                (pi/2)Iz1---(pi/2)Iz2---(-2)Iz1Iz2
+                Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
+                '''
+                self.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
+                self.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
+                self.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
+
+                self.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
+                self.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
+                self.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
+
+                '''
+                The pulse of (-2)Iz1Iz2. The angle theta is actually (-\pi/2). However, since we cannot rotate 
+                a minus angle, we should plus another (4\pi)
+                '''
+                self.add_pulse(delayTime((4 - 0.5) / Jfreq))
+            else:
+                '''
+                Change H and C
+                '''
+                self.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
+                self.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
+                self.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
+
+                self.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
+                self.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
+                self.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
+
+                self.add_pulse(delayTime((4 - 0.5) / Jfreq))
+        else:
+            pass
+
+    def add_CNOT_pulse(self, approximate=False, Hcontrol=True):
+        if not approximate:
+            if Hcontrol:
+                '''
+                Add pulse sequence for approximate h gate on carbon
+                '''
+                self.add_H_gate_second_pulse(approximate=False)
+
+                '''
+                Add pulse sequence for exact CZ gate
+                '''
+                self.add_CZ_pulse(Hcontrol=True, approximate=False)
+
+                '''
+                Add pulse sequence for approximate h gate on carbon
+                '''
+                self.add_H_gate_second_pulse(approximate=False)
+            else:
+                '''
+                Add pulse sequence for approximate h gate on proton
+                '''
+                self.add_H_gate_first_pulse(approximate=False)
+
+                '''
+                Add pulse sequence for exact CZ gate
+                '''
+                self.add_CZ_pulse(Hcontrol=False, approximate=False)
+
+                '''
+                Add pulse sequence for approximate h gate on proton
+                '''
+                self.add_H_gate_first_pulse()
+        else:
+            if Hcontrol:
+                self.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
+                self.add_pulse(delayTime(0.5 / Jfreq))
+                self.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
+            else:
+                self.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
+                self.add_pulse(delayTime(0.5 / Jfreq))
+                self.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
+
     def read_proton_spectrum(self, normalize=True):
 
         fft_result = np.fft.fft(self._proton_time_domain)
@@ -288,8 +403,7 @@ class chloroform:
                       )
         return MC
 
-
-    def read_and_plot(self,path):
+    def read_and_plot(self, path):
         '''
         Read the data signal in the time domain
         '''
@@ -304,13 +418,12 @@ class chloroform:
         Simulate what is shown on the screen
         '''
         self.show_proton_spectrum_real(-5, 15, store=True,
-                                            path=path+"proton.png")
+                                       path=path + "proton.png")
 
         self.show_carbon_spectrum_real(74, 80, store=True,
-                                            path=path+"carbon.png")
+                                       path=path + "carbon.png")
 
-
-    def show_proton_fid_real(self, maxtime, store=False, path=None,title="Proton FID real", miny=-1, maxy=1):
+    def show_proton_fid_real(self, maxtime, store=False, path=None, title="Proton FID real", miny=-1, maxy=1):
         plt.plot(self._times, np.real(self._proton_time_domain), label="Proton test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)

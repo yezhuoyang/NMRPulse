@@ -143,11 +143,9 @@ def approx_hadamard_carbon_pulse():
                                     [0, 0, 0, 0.1]], dtype=complex))
 
     '''
-    Clear the pulses
+    Add the pulses
     '''
-    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(0, 1 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90C, wC))
+    NMRsample.add_H_gate_first_pulse(approximate=True)
 
     NMRsample.evolve_all_pulse()
     matrix = NMRsample.get_pulse_unitary()
@@ -164,11 +162,9 @@ def approx_hadamard_proton_pulse():
                                     [0, 0, 0, 0.1]], dtype=complex))
 
     '''
-    Clear the pulses
+    Add the pulses
     '''
-    NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 1 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
+    NMRsample.add_H_gate_second_pulse(approximate=True)
 
     NMRsample.evolve_all_pulse()
     matrix = NMRsample.get_pulse_unitary()
@@ -238,9 +234,7 @@ def approx_CNOT():
     (pi/2)Ix2---(2Iz1Iz2)---(pi/2)Iy2
     Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
     '''
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
+    NMRsample.add_CNOT_pulse(Hcontrol=True, approximate=True)
     '''
     Evolve the density matrix with all pulses
     '''
@@ -292,24 +286,7 @@ def exact_CZ_pulse():
                                     [0, 0, -0.3, 0],
                                     [0, 0, 0, -0.5]], dtype=complex))
 
-    '''
-    Add pulse sequence for exact CZ gate
-    (pi/2)Iz1---(pi/2)Iz2---(-2)Iz1Iz2
-    Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
-    '''
-    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
-    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
-
-    NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
-    NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
-
-    '''
-    The pulse of (-2)Iz1Iz2. The angle theta is actually (-\pi/2). However, since we cannot rotate 
-    a minus angle, we should plus another (4\pi)
-    '''
-    NMRsample.add_pulse(delayTime((4 - 0.5) / Jfreq))
+    NMRsample.add_CZ_pulse(Hcontrol=True, approximate=False)
     '''
     Evolve the density matrix with all pulses
     '''
@@ -323,7 +300,6 @@ def exact_CZ_pulse():
     Read the data signal in the time domain
     '''
     NMRsample.read_and_plot("Figure/CNOTapprox")
-
 
 
 def exact_CNOT_pulse_Hcontrol():
@@ -581,7 +557,8 @@ uf: A list of the state input
 '''
 
 
-def pseudo_pure_state(uf):
+def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
+    assert not (add_CNOT and add_approx_CNOT)
     '''
     Initialize the chloroform instance
     '''
@@ -610,11 +587,7 @@ def pseudo_pure_state(uf):
     Add P1 permutation
     '''
 
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
+    NMRsample.add_p1_perm_pulse()
 
     '''
     Initialize the initial state 00,01,10 or 11
@@ -641,11 +614,7 @@ def pseudo_pure_state(uf):
     Add P2 permutation
     '''
 
-    NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
-    NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-    NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
+    NMRsample.add_p2_perm_pulse()
 
     '''
     Initialize the initial state 00,01,10 or 11
@@ -690,21 +659,7 @@ def spectrum_only_a():
     '''
     Read the data signal in the time domain
     '''
-    NMRsample.read_proton_time()
-    NMRsample.read_carbon_time()
-    '''
-    Read the spectrum
-    '''
-    NMRsample.read_proton_spectrum()
-    NMRsample.read_carbon_spectrum()
-    '''
-    Simulate what is shown on the screen
-    '''
-    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
-                                        path="Figure/proton-spectruma.png")
-
-    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
-                                        path="Figure/carbon-spectruma.png")
+    NMRsample.read_and_plot("Figure/spectruma-")
     return
 
 
@@ -724,21 +679,7 @@ def spectrum_only_b():
     '''
     Read the data signal in the time domain
     '''
-    NMRsample.read_proton_time()
-    NMRsample.read_carbon_time()
-    '''
-    Read the spectrum
-    '''
-    NMRsample.read_proton_spectrum()
-    NMRsample.read_carbon_spectrum()
-    '''
-    Simulate what is shown on the screen
-    '''
-    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
-                                        path="Figure/proton-spectrumb.png")
-
-    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
-                                        path="Figure/carbon-spectrumb.png")
+    NMRsample.read_and_plot("Figure/spectrumb-")
     return
 
 
@@ -758,22 +699,7 @@ def spectrum_only_c():
     '''
     Read the data signal in the time domain
     '''
-    NMRsample.read_proton_time()
-    NMRsample.read_carbon_time()
-    '''
-    Read the spectrum
-    '''
-    NMRsample.read_proton_spectrum()
-    NMRsample.read_carbon_spectrum()
-    '''
-    Simulate what is shown on the screen
-    '''
-    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
-                                        path="Figure/proton-spectrumc.png")
-
-    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
-                                        path="Figure/carbon-spectrumc.png")
-    return
+    NMRsample.read_and_plot("Figure/spectrumc-")
 
 
 def spectrum_only_d():
@@ -792,22 +718,7 @@ def spectrum_only_d():
     '''
     Read the data signal in the time domain
     '''
-    NMRsample.read_proton_time()
-    NMRsample.read_carbon_time()
-    '''
-    Read the spectrum
-    '''
-    NMRsample.read_proton_spectrum()
-    NMRsample.read_carbon_spectrum()
-    '''
-    Simulate what is shown on the screen
-    '''
-    NMRsample.show_proton_spectrum_real(-5, 15, store=True,
-                                        path="Figure/proton-spectrumd.png")
-
-    NMRsample.show_carbon_spectrum_real(74, 80, store=True,
-                                        path="Figure/carbon-spectrumd.png")
-    return
+    NMRsample.read_and_plot("Figure/spectrumd-")
 
 
 if __name__ == "__main__":
@@ -826,10 +737,10 @@ if __name__ == "__main__":
     # Xgate_carbon()
 
     # approx_CNOT()
-    # pseudo_pure_state()
+    pseudo_pure_state([1, 1])
     # spectrum_only_a()
     # spectrum_only_b()
     # spectrum_only_c()
     # spectrum_only_d()
 
-    P1_pulse()
+    # P1_pulse()

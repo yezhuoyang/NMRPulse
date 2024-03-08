@@ -32,89 +32,28 @@ class NMRalgorithm:
 
 
     def add_p1_perm_pulse(self):
-        self.NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
-        self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-        self.NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90C, wC, 0, 0.5 * pl90H, wH))
-        self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-        self.NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
+        self.NMRsample.add_p1_perm_pulse()
 
     def add_p2_perm_pulse(self):
-        self.NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
-        self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-        self.NMRsample.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
-        self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-        self.NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
+        self.NMRsample.add_p2_perm_pulse()
 
     def add_X_gate_first_pulse(self):
-        self.NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
+        self.NMRsample.add_X_gate_first_pulse()
 
     def add_X_gate_second_pulse(self):
-        self.NMRsample.add_pulse(pulseSingle(0, pl90C, wC))
+        self.NMRsample.add_X_gate_second_pulse()
 
     def add_H_gate_first_pulse(self):
-        self.NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
-        self.NMRsample.add_pulse(pulseSingle(0, 1 * pl90H, wH))
-        self.NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
+        self.NMRsample.add_H_gate_first_pulse()
 
     def add_H_gate_second_pulse(self):
-        self.NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
-        self.NMRsample.add_pulse(pulseSingle(0, 1 * pl90C, wC))
-        self.NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90C, wC))
+        self.NMRsample.add_H_gate_second_pulse()
 
     def add_CZ_pulse(self):
-        if not self.approximate:
-            '''
-            Add pulse sequence for exact CZ gate
-            (pi/2)Iz1---(pi/2)Iz2---(-2)Iz1Iz2
-            Recall that channel 0 for +x, 1 for +y, 2 for -x, 3 for -y
-            '''
-            self.NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
-            self.NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
-            self.NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
-
-            self.NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
-            self.NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
-            self.NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
-
-            '''
-            The pulse of (-2)Iz1Iz2. The angle theta is actually (-\pi/2). However, since we cannot rotate 
-            a minus angle, we should plus another (4\pi)
-            '''
-            self.NMRsample.add_pulse(delayTime((4 - 0.5) / Jfreq))
-        else:
-            pass
+        self.NMRsample.add_CZ_pulse(self.approximate)
 
     def add_CNOT_pulse(self):
-        if not self.approximate:
-            '''
-            Add pulse sequence for approximate h gate on carbon
-            '''
-            self.NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
-            self.NMRsample.add_pulse(pulseSingle(0, 1 * pl90H, wH))
-            self.NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
-
-            '''
-            Add pulse sequence for exact CZ gate
-            '''
-            self.NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
-            self.NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
-            self.NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
-            self.NMRsample.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
-            self.NMRsample.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
-            self.NMRsample.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
-            self.NMRsample.add_pulse(delayTime((4 - 0.5) / Jfreq))
-
-            '''
-            Add pulse sequence for approximate h gate on carbon
-            '''
-
-            self.NMRsample.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
-            self.NMRsample.add_pulse(pulseSingle(0, 1 * pl90H, wH))
-            self.NMRsample.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
-        else:
-            self.NMRsample.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
-            self.NMRsample.add_pulse(delayTime(0.5 / Jfreq))
-            self.NMRsample.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
+        self.NMRsample.add_CNOT_pulse(self.approximate)
 
     def plot_measure_all(self):
         raise NotImplementedError
