@@ -618,13 +618,19 @@ def DJ_print_pulse(uf):
 
 
 if __name__ == "__main__":
+    permute_DJ([0,0])
+
+    '''
     grover = Grover()
 
     grover.set_grover_step(1)
 
-    grover.set_function([1, 0])
+    grover.set_function([0, 0])
 
     grover.plot_measure_all()
+    '''
+
+
 
     '''
     DJ = Djalgorithm()
