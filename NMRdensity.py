@@ -288,67 +288,73 @@ class chloroform:
                       )
         return MC
 
-    def show_proton_fid_real(self, maxtime, store=False, path=None, miny=-1, maxy=1):
+    def show_proton_fid_real(self, maxtime, store=False, path=None,title="Proton FID real", miny=-1, maxy=1):
         plt.plot(self._times, np.real(self._proton_time_domain), label="Proton test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)
         plt.xlabel("Time/second")
+        plt.title(title)
         plt.legend()
         if store:
             plt.savefig(path)
         plt.show()
 
-    def show_proton_fid_imag(self, maxtime, store=False, path=None, miny=-1, maxy=1):
+    def show_proton_fid_imag(self, maxtime, store=False, path=None, title="Proton FID imaginary", miny=-1, maxy=1):
         plt.plot(self._times, np.imag(self._proton_time_domain), label="Proton test_fid.py(Imaginary part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)
         plt.xlabel("Time/second")
+        plt.title(title)
         plt.legend()
         if store:
             plt.savefig(path)
         plt.show()
 
-    def show_proton_spectrum_real(self, minppm, maxppm, store=False, path=None):
+    def show_proton_spectrum_real(self, minppm, maxppm, store=False, path=None, title="Proton spectrum real"):
         plt.plot(self._proton_freq_ppm, np.real(self._proton_freq_domain), label="Proton spectrum(Real part)")
         plt.xlim(minppm, maxppm)
         plt.axvline(x=cfH, color="red", linestyle="--", label="Center frequency of proton")
         plt.xlabel("Frequency/ppm")
+        plt.title(title)
         plt.legend()
         if store:
             plt.savefig(path)
         plt.show()
 
-    def show_proton_spectrum_imag(self, minppm, maxppm, store=False, path=None):
+    def show_proton_spectrum_imag(self, minppm, maxppm, store=False, path=None, title="Proton spectrum imaginary"):
         plt.plot(self._proton_freq_ppm, np.imag(self._proton_freq_domain), label="Proton spectrum(Imaginary part)")
         plt.xlim(minppm, maxppm)
         plt.axvline(x=cfH, color="red", linestyle="--", label="Center frequency of proton")
         plt.xlabel("Frequency/ppm")
+        plt.title(title)
         plt.legend()
         if store:
             plt.savefig(path)
         plt.show()
 
-    def show_carbon_fid_real(self, maxtime, store=False, path=None, miny=-1, maxy=1):
+    def show_carbon_fid_real(self, maxtime, store=False, path=None, miny=-1, maxy=1, title="Carbon FID real"):
         plt.plot(self._times, np.real(self._carbon_time_domain), label="Carbon test_fid.py(Real part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)
         plt.xlabel("Time/second")
+        plt.title(title)
         plt.legend()
         if store:
             plt.savefig(path)
         plt.show()
 
-    def show_carbon_fid_imag(self, maxtime, store=False, path=None, miny=-1, maxy=1):
+    def show_carbon_fid_imag(self, maxtime, store=False, path=None, miny=-1, maxy=1, title="Carbon FID imaginary"):
         plt.plot(self._times, np.real(self._carbon_freq_domain), label="Carbon test_fid.py(Imaginary part)")
         plt.xlim(0, maxtime)
         plt.ylim(miny, maxy)
         plt.xlabel("Time/second")
+        plt.title(title)
         plt.legend()
         if store:
             plt.savefig(path)
         plt.show()
 
-    def show_carbon_spectrum_real(self, minppm, maxppm, store=False, path=None):
+    def show_carbon_spectrum_real(self, minppm, maxppm, store=False, path=None, title="Carbon spectrum real"):
         plt.plot(self._carbon_freq_ppm, np.real(self._carbon_freq_domain), label="Carbon spectrum(Real part)")
         plt.xlim(minppm, maxppm)
         plt.axvline(x=cfC, color="red", linestyle="--", label="Center frequency of carbon")
@@ -358,7 +364,7 @@ class chloroform:
             plt.savefig(path)
         plt.show()
 
-    def show_carbon_spectrum_imag(self, minppm, maxppm, store=False, path=None):
+    def show_carbon_spectrum_imag(self, minppm, maxppm, store=False, path=None, title="Carbon spectrum imaginary"):
         plt.plot(self._carbon_freq_ppm, np.imag(self._carbon_freq_domain), label="Carbon spectrum(Imaginary part)")
         plt.xlim(minppm, maxppm)
         plt.axvline(x=cfC, color="red", linestyle="--", label="Center frequency of carbon")
@@ -373,6 +379,7 @@ class chloroform:
         for pulse in self._pulses:
             print(pulse)
         print("parList=endpp()")
+
 
 import matplotlib.pyplot as plt
 

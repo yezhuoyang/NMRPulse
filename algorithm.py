@@ -140,6 +140,26 @@ class NMRalgorithm:
     def print_pulses(self):
         self.NMRsample.print_pulses()
 
+    def show_spectrum(self, path: str):
+        '''
+        Read the data signal in the time domain
+        '''
+        self.NMRsample.read_proton_time()
+        self.NMRsample.read_carbon_time()
+        '''
+        Read the spectrum
+        '''
+        self.NMRsample.read_proton_spectrum()
+        self.NMRsample.read_carbon_spectrum()
+        '''
+        Simulate what is shown on the screen
+        '''
+        self.NMRsample.show_proton_spectrum_real(-5, 15, store=True,
+                                                 path=path)
+
+        self.NMRsample.show_carbon_spectrum_real(74, 80, store=True,
+                                                 path=path)
+
 
 class Djalgorithm(NMRalgorithm):
 
@@ -618,6 +638,9 @@ def DJ_print_pulse(uf):
 
 
 if __name__ == "__main__":
+    permute_DJ([1, 0])
+    permute_DJ([1, 1])
+    '''
     grover = Grover()
 
     grover.set_grover_step(1)
@@ -625,6 +648,7 @@ if __name__ == "__main__":
     grover.set_function([1, 0])
 
     grover.plot_measure_all()
+    '''
 
     '''
     DJ = Djalgorithm()
