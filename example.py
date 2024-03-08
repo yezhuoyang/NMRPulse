@@ -318,7 +318,7 @@ def exact_CNOT_pulse_Hcontrol():
     '''
     Add pulse sequence for approximate h gate on carbon
     '''
-    NMRsample.add_CNOT_pulse(approximate=False,Hcontrol=True)
+    NMRsample.add_CNOT_pulse(approximate=False, Hcontrol=True)
 
     '''
     Evolve the density matrix with all pulses
@@ -348,8 +348,7 @@ def exact_CNOT_pulse_Ccontrol():
                                     [0, 0, -0.3, 0],
                                     [0, 0, 0, -0.5]], dtype=complex))
 
-
-    NMRsample.add_CNOT_pulse(approximate=False,Hcontrol=False)
+    NMRsample.add_CNOT_pulse(approximate=False, Hcontrol=False)
 
     '''
     Evolve the density matrix with all pulses
@@ -599,6 +598,137 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     print(pseudo_pure_density)
 
 
+'''
+Simulate the result of pseudo pure state
+uf: A list of the state input
+'''
+
+
+def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
+    assert not (add_CNOT and add_approx_CNOT)
+
+
+    ufstring=str(uf[0])+str(uf[1])
+
+    '''
+    Initialize the chloroform instance
+    '''
+    NMRsample = chloroform()
+
+    NMRsample.set_thermal_equilibrium()
+
+    '''
+    Initialize the initial state 00,01,10 or 11
+    '''
+    if uf[0] == 1:
+        NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
+    if uf[1] == 1:
+        NMRsample.add_pulse(pulseSingle(1, pl90C, wC))
+
+    if add_CNOT:
+        NMRsample.add_CNOT_pulse(approximate=False, Hcontrol=True)
+    elif add_approx_CNOT:
+        NMRsample.add_CNOT_pulse(approximate=True, Hcontrol=True)
+
+    NMRsample.evolve_all_pulse()
+
+    if add_CNOT:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP0f{}".format(ufstring,ufstring))
+    elif add_approx_CNOT:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP0f{}".format(ufstring,ufstring))
+    else:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP0f{}".format(ufstring,ufstring))
+
+    density0 = NMRsample.get_density()
+
+    NMRsample.set_thermal_equilibrium()
+    NMRsample.set_pulses([])
+
+    '''
+    Add P1 permutation
+    '''
+
+    NMRsample.add_p1_perm_pulse()
+
+    '''
+    Initialize the initial state 00,01,10 or 11
+    '''
+    if uf[0] == 1:
+        NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
+    if uf[1] == 1:
+        NMRsample.add_pulse(pulseSingle(1, pl90C, wC))
+
+    if add_CNOT:
+        NMRsample.add_CNOT_pulse(approximate=False, Hcontrol=True)
+    if add_approx_CNOT:
+        NMRsample.add_CNOT_pulse(approximate=True, Hcontrol=True)
+
+    NMRsample.evolve_all_pulse()
+
+    if add_CNOT:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP1f{}".format(ufstring,ufstring))
+    elif add_approx_CNOT:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP1f{}".format(ufstring,ufstring))
+    else:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP1f{}".format(ufstring,ufstring))
+
+    # np.set_printoptions(precision=2)
+    # print("P1 matrix")
+    # print(NMRsample.get_pulse_unitary())
+
+    density1 = NMRsample.get_density()
+
+    NMRsample.set_thermal_equilibrium()
+    NMRsample.set_pulses([])
+
+    '''
+    Add P2 permutation
+    '''
+
+    NMRsample.add_p2_perm_pulse()
+
+    '''
+    Initialize the initial state 00,01,10 or 11
+    '''
+    if uf[0] == 1:
+        NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
+    if uf[1] == 1:
+        NMRsample.add_pulse(pulseSingle(1, pl90C, wC))
+
+    if add_CNOT:
+        NMRsample.add_CNOT_pulse(approximate=False, Hcontrol=True)
+    if add_approx_CNOT:
+        NMRsample.add_CNOT_pulse(approximate=True, Hcontrol=True)
+
+    NMRsample.evolve_all_pulse()
+
+    # print("P2 matrix")
+    # print(NMRsample.get_pulse_unitary())
+
+    if add_CNOT:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP2f{}".format(ufstring,ufstring))
+    elif add_approx_CNOT:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP2f{}".format(ufstring,ufstring))
+    else:
+        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP2f{}".format(ufstring,ufstring))
+
+    density2 = NMRsample.get_density()
+
+    pseudo_pure_density = (density0 + density1 + density2) / 3
+
+    new_NMRsample = chloroform()
+    new_NMRsample.set_density(pseudo_pure_density)
+
+    if add_CNOT:
+        new_NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoaveragef{}".format(ufstring,ufstring))
+    elif add_approx_CNOT:
+        new_NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoaveragef{}".format(ufstring,ufstring))
+    else:
+        new_NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoaveragef{}".format(ufstring,ufstring))
+
+    print(pseudo_pure_density)
+
+
 def spectrum_only_a():
     '''
     Initialize the chloroform instance
@@ -693,7 +823,8 @@ if __name__ == "__main__":
     # Xgate_carbon()
 
     # approx_CNOT()
-    pseudo_pure_state([1, 1])
+
+    pseudo_pure_state([0, 1])
     # spectrum_only_a()
     # spectrum_only_b()
     # spectrum_only_c()
