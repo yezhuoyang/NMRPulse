@@ -288,6 +288,28 @@ class chloroform:
                       )
         return MC
 
+
+    def read_and_plot(self,path):
+        '''
+        Read the data signal in the time domain
+        '''
+        self.read_proton_time()
+        self.read_carbon_time()
+        '''
+        Read the spectrum
+        '''
+        self.read_proton_spectrum()
+        self.read_carbon_spectrum()
+        '''
+        Simulate what is shown on the screen
+        '''
+        self.show_proton_spectrum_real(-5, 15, store=True,
+                                            path=path+"proton.png")
+
+        self.show_carbon_spectrum_real(74, 80, store=True,
+                                            path=path+"carbon.png")
+
+
     def show_proton_fid_real(self, maxtime, store=False, path=None,title="Proton FID real", miny=-1, maxy=1):
         plt.plot(self._times, np.real(self._proton_time_domain), label="Proton test_fid.py(Real part)")
         plt.xlim(0, maxtime)
@@ -359,6 +381,7 @@ class chloroform:
         plt.xlim(minppm, maxppm)
         plt.axvline(x=cfC, color="red", linestyle="--", label="Center frequency of carbon")
         plt.xlabel("Frequency/ppm")
+        plt.title(title)
         plt.legend()
         if store:
             plt.savefig(path)
