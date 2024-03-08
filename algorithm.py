@@ -527,6 +527,7 @@ def permute_DJ(uf):
 
 def permute_grover(db):
     grover = Grover()
+    grover.set_grover_step(1)
     grover.set_function(db)
 
     grover.construct_circuit()
@@ -588,11 +589,11 @@ def permute_grover(db):
     '''
     pseudo_sample.show_proton_spectrum_real(-5, 15, store=True,
                                             path="Figure/Grover/{}{}/Groverproton{}{}.png".format(
-                                            db[0], db[1], db[0], db[1]))
+                                                db[0], db[1], db[0], db[1]))
 
     pseudo_sample.show_carbon_spectrum_real(74, 80, store=True,
                                             path="Figure/Grover/{}{}/Grovercarbon{}{}.png".format(
-                                            db[0], db[1], db[0], db[1]))
+                                                db[0], db[1], db[0], db[1]))
 
 
 def DJ_print_pulse(uf):
@@ -613,7 +614,7 @@ def DJ_print_pulse(uf):
 
 
 if __name__ == "__main__":
-    #DJ_print_pulse([0, 0])
+    # DJ_print_pulse([0, 0])
 
-    #permute_DJ([1,1])
-    permute_grover([1,1])
+    # permute_DJ([1,1])
+    permute_grover([0, 0])

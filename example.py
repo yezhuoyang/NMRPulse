@@ -607,8 +607,7 @@ uf: A list of the state input
 def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     assert not (add_CNOT and add_approx_CNOT)
 
-
-    ufstring=str(uf[0])+str(uf[1])
+    ufstring = str(uf[0]) + str(uf[1])
 
     '''
     Initialize the chloroform instance
@@ -633,11 +632,11 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     NMRsample.evolve_all_pulse()
 
     if add_CNOT:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP0f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP0f{}".format(ufstring, ufstring))
     elif add_approx_CNOT:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP0f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP0f{}".format(ufstring, ufstring))
     else:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP0f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP0f{}".format(ufstring, ufstring))
 
     density0 = NMRsample.get_density()
 
@@ -666,11 +665,11 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     NMRsample.evolve_all_pulse()
 
     if add_CNOT:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP1f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP1f{}".format(ufstring, ufstring))
     elif add_approx_CNOT:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP1f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP1f{}".format(ufstring, ufstring))
     else:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP1f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP1f{}".format(ufstring, ufstring))
 
     # np.set_printoptions(precision=2)
     # print("P1 matrix")
@@ -706,11 +705,11 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     # print(NMRsample.get_pulse_unitary())
 
     if add_CNOT:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP2f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoP2f{}".format(ufstring, ufstring))
     elif add_approx_CNOT:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP2f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP2f{}".format(ufstring, ufstring))
     else:
-        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP2f{}".format(ufstring,ufstring))
+        NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP2f{}".format(ufstring, ufstring))
 
     density2 = NMRsample.get_density()
 
@@ -720,11 +719,11 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     new_NMRsample.set_density(pseudo_pure_density)
 
     if add_CNOT:
-        new_NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoaveragef{}".format(ufstring,ufstring))
+        new_NMRsample.read_and_plot("Figure/Pseudo/{}/CNOTpseudoaveragef{}".format(ufstring, ufstring))
     elif add_approx_CNOT:
-        new_NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoaveragef{}".format(ufstring,ufstring))
+        new_NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoaveragef{}".format(ufstring, ufstring))
     else:
-        new_NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoaveragef{}".format(ufstring,ufstring))
+        new_NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoaveragef{}".format(ufstring, ufstring))
 
     print(pseudo_pure_density)
 
@@ -824,7 +823,7 @@ if __name__ == "__main__":
 
     # approx_CNOT()
 
-    pseudo_pure_state([0, 1])
+    pseudo_pure_state([1, 1], add_CNOT=True)
     # spectrum_only_a()
     # spectrum_only_b()
     # spectrum_only_c()
