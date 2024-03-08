@@ -6,10 +6,9 @@ def all_close(matrix1, matrix2):
 
 
 def hilbert_schmidt_distance(V: np.ndarray, U: np.ndarray):
-    L = V.shape[0]
     Vdag = V.transpose()
     Vdag = Vdag.conjugate()
-    return np.sqrt(1 - np.abs(np.abs(np.trace(np.matmul(Vdag, U))) ** 2) / (L ** 2))
+    return np.sqrt(np.abs(1 - np.abs(np.abs(np.trace(np.matmul(Vdag, U))) ** 2) / (4 ** 2)))
 
 
 def norm_2_distance(matrix1: np.ndarray, matrix2: np.ndarray):
