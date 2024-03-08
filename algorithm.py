@@ -595,39 +595,20 @@ def permute_grover(db):
 
 def DJ_print_pulse(uf):
     DJ = Djalgorithm()
+    '''
+    Initialize the input function
+    f1:uf=[0,0]
+    f2:uf=[0,1]
+    f3:uf=[1,0]
+    f4:uf=[1,1]
+    '''
     DJ.set_function(uf)
-
     DJ.construct_pulse()
-
+    '''
+    Print the real Spinsolve pulses
+    '''
     DJ.print_pulses()
 
 
 if __name__ == "__main__":
-    # permute_DJ([0, 0])
-    # permute_DJ([0, 1])
-    # permute_DJ([1, 0])
-    # permute_DJ([1, 1])
-    '''
-    grover = Grover()
-
-    grover.set_grover_step(1)
-
-    grover.set_function([0, 0])
-
-    grover.plot_measure_all()
-    '''
-    # permute_grover([0,0])
-    # permute_DJ([0, 1])
-    #permute_DJ([1, 0])
-    # permute_DJ([1, 1])
-
-    '''
-    DJ = Djalgorithm()
-    DJ.set_function([1, 0])
-
-    DJ.construct_circuit()
-    DJ.calculate_result_circuit()
-
-    DJ.plot_measure_all()
-    '''
-    DJ_print_pulse([1,0])
+    DJ_print_pulse([0,0])
