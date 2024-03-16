@@ -1,8 +1,5 @@
-import numpy as np
-
-from NMRdensity import *
-from params import *
-from Pulses import *
+from Simulator.NMRdensity import *
+from Simulator.Pulses import *
 import matplotlib.pyplot as plt
 
 

@@ -1,5 +1,5 @@
 import numpy as np
-from params import *
+from Simulator.params import *
 
 
 def I_matrix():

@@ -1,6 +1,7 @@
 import numpy as np
-from Pulses import pulse, pulseSingle, pulseTwo, delayTime,BarrierPulse
+from Pulses import pulse, pulseSingle, pulseTwo, delayTime, BarrierPulse
 from params import *
+import csv
 
 
 class chloroform:
@@ -159,7 +160,7 @@ class chloroform:
             return
         self._pulse_unitary = np.identity(4, dtype=complex)
         for pulse in self._pulses:
-            if isinstance(pulse,BarrierPulse):
+            if isinstance(pulse, BarrierPulse):
                 continue
 
             if isinstance(pulse, pulseSingle):
@@ -425,6 +426,9 @@ class chloroform:
 
         self.show_carbon_spectrum_real(74, 80, store=True,
                                        path=path + "carbon.png")
+
+    def load_data_and_plot(self, path):
+        pass
 
     def show_proton_fid_real(self, maxtime, store=False, path=None, title="Proton FID real", miny=-1, maxy=1):
         plt.plot(self._times, np.real(self._proton_time_domain), label="Proton test_fid.py(Real part)")

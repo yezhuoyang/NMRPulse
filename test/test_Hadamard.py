@@ -1,7 +1,6 @@
 import unittest
-import unittest
-from util import *
-from NMRdensity import *
+from Simulator.util import *
+from Simulator.NMRdensity import *
 import numpy as np
 
 

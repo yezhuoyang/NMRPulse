@@ -1,10 +1,10 @@
+from typing import List
+
 import qiskit
-import functools
 from qiskit_aer import AerSimulator
+
 from NMRdensity import *
 from Pulses import *
-from typing import List, Union, Any
-from qiskit.visualization import plot_histogram
 
 
 class NMRalgorithm:
@@ -684,8 +684,8 @@ def Grover_print_pulse(uf):
 
 
 if __name__ == "__main__":
-    DJ_print_pulse([0, 0])
+    #DJ_print_pulse([0, 0])
 
     # permute_DJ([1,1])
     # permute_grover([1, 0])
-    #Grover_print_pulse([1, 0, 0, 0])
+    Grover_print_pulse([1, 0, 0, 0])

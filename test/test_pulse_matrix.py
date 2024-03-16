@@ -1,7 +1,7 @@
-from NMRdensity import *
-from Pulses import *
-from params import *
-from util import *
+from Simulator.NMRdensity import *
+from Simulator.Pulses import *
+from Simulator.params import *
+from Simulator.util import *
 
 
 def test_pulse_two_case1():
