@@ -760,9 +760,11 @@ if __name__ == "__main__":
     # CNOT_all_cases()
     # ApproxCNOT_all_cases()
     # Grover_print_pulse([1, 0, 0, 0])
-    #plot_data()
+    # plot_data()
 
-    pseudo_pure_state([0,0], add_CNOT=False, add_approx_CNOT=True)
-    pseudo_pure_state([0,1], add_CNOT=False, add_approx_CNOT=True)
-    pseudo_pure_state([1,0], add_CNOT=False, add_approx_CNOT=True)
-    pseudo_pure_state([1,1], add_CNOT=False, add_approx_CNOT=True)
+    # pseudo_pure_state([0,0], add_CNOT=False, add_approx_CNOT=True)
+    # pseudo_pure_state([0,1], add_CNOT=False, add_approx_CNOT=True)
+    # pseudo_pure_state([1,0], add_CNOT=False, add_approx_CNOT=True)
+    # pseudo_pure_state([1,1], add_CNOT=False, add_approx_CNOT=True)
+
+    permute_DJ([1, 1])
