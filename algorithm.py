@@ -207,7 +207,6 @@ class Djalgorithm(NMRalgorithm):
         self.circuit.h(list(range(0, 2)))
         self.compile_uf_circuit()
         self.circuit.h(list(range(0, 2)))
-
         self.circuit.measure_all()
 
         # Use Aer's qasm_simulator
@@ -251,7 +250,7 @@ class Djalgorithm(NMRalgorithm):
         plt.xlabel('State')
         plt.ylabel('Probability')
         plt.title('Measurement result of DJ for f{}{}'.format(self.UF[0], self.UF[1]))
-        plt.savefig("Figure/DJSimu{}{}".format(self.UF[0], self.UF[1]))
+        plt.savefig("Figure/DJ/{}{}/DJSimu{}{}".format(self.UF[0], self.UF[1], self.UF[0], self.UF[1]))
         plt.show()
 
 
@@ -260,14 +259,14 @@ class Grover(NMRalgorithm):
     def __init__(self):
         super().__init__()
         self.computed = False
-        self.circuit = qiskit.QuantumCircuit(2, 1)
+        self.circuit = qiskit.QuantumCircuit(2, 2)
         self._simulator = AerSimulator()
         '''
         How many time we may need to call the grover operator,
         initially set to be 1
         '''
-        self.grover_step = 2
-        self.max_step = 2
+        self.grover_step = 1
+        self.max_step = 1
         self._database = []
         self._solution = -1
         self._succeed = False
@@ -282,8 +281,10 @@ class Grover(NMRalgorithm):
         Construct grover circuit many times
         '''
         for i in range(self.grover_step):
+            self.circuit.barrier([0, 1])
             self.construct_grover_op_circuit()
-        self.circuit.measure(list(range(0, 1)), list(range(0, 1)))
+        self.circuit.x(0)
+        self.circuit.measure(list(range(0, 2)), list(range(0, 2)))
         return
 
     def construct_pulse(self):
@@ -296,38 +297,27 @@ class Grover(NMRalgorithm):
         self.add_H_gate_second_pulse()
         for i in range(self.grover_step):
             self.construct_grover_op_pulse()
+        self.add_X_gate_first_pulse()
         return
 
     def calculate_result_circuit(self):
-        # print(self._database)
-        while not self.computed:
-            self.construct_circuit()
-            compiled_circuit = qiskit.transpile(self.circuit, self._simulator)
-            # Execute the circuit on the aer simulator
-            job = self._simulator.run(compiled_circuit, shots=1)
 
-            # Grab results from the job
-            result = job.result()
-            # Returns counts
-            counts = result.get_counts(compiled_circuit)
-            print(counts)
-            result = list(counts.keys())[0]
+        self.construct_circuit()
+        compiled_circuit = qiskit.transpile(self.circuit, self._simulator)
+        # Execute the circuit on the aer simulator
+        job = self._simulator.run(compiled_circuit, shots=1)
 
-            self.computed = False
-            result = int(result[::-1], 2)
-            if self._database[result] == 1:
-                self.computed = True
-                self._succeed = True
-                self._solution = result
-                print(f"Found a solution {result}, Grover step={self.grover_step}")
-                return
-            else:
-                self.grover_step = self.grover_step + 1
-                self.circuit.clear()
-                if self.grover_step >= self.max_step:
-                    break
-        if not self.computed:
-            print("No solution!")
+        # Grab results from the job
+        result = job.result()
+
+        print(result)
+
+        # Returns counts
+        counts = result.get_counts(compiled_circuit)
+        print(counts)
+        result = list(counts.keys())[0]
+        print("Measure:")
+        print(result)
 
     def calculate_result_pulse(self):
         self.NMRsample.evolve_all_pulse()
@@ -351,36 +341,69 @@ class Grover(NMRalgorithm):
     def construct_zf_circuit(self):
         for i in range(0, len(self._database)):
             if self._database[i] == 1:
-                if i == 1:
+                if i == 0:
+                    self.circuit.x(0)
+                    self.circuit.x(1)
                     self.circuit.cz(0, 1)
-                elif i == 0:
+                    self.circuit.x(0)
+                    self.circuit.x(1)
+                elif i == 1:
                     self.circuit.x(0)
                     self.circuit.cz(0, 1)
                     self.circuit.x(0)
+                elif i == 2:
+                    self.circuit.x(1)
+                    self.circuit.cz(0, 1)
+                    self.circuit.x(1)
+                elif i == 3:
+                    self.circuit.cz(0, 1)
         return
 
     def construct_zf_pulse(self):
         for i in range(0, len(self._database)):
             if self._database[i] == 1:
-                if i == 1:
+                if i == 0:
+                    self.add_X_gate_first_pulse()
+                    self.add_X_gate_second_pulse()
                     self.add_CZ_pulse()
-                elif i == 0:
+                    self.add_X_gate_first_pulse()
+                    self.add_X_gate_second_pulse()
+                elif i == 1:
                     self.add_X_gate_first_pulse()
                     self.add_CZ_pulse()
                     self.add_X_gate_first_pulse()
+                elif i == 2:
+                    self.add_X_gate_second_pulse()
+                    self.add_CZ_pulse()
+                    self.add_X_gate_second_pulse()
+                elif i == 3:
+                    self.add_CZ_pulse()
         return
 
     def construct_zo_circuit(self):
+        self.circuit.x(0)
+        self.circuit.x(1)
         self.circuit.cz(0, 1)
+        self.circuit.x(0)
+        self.circuit.x(1)
 
     def construct_zo_pulse(self):
+        self.add_X_gate_first_pulse()
+        self.add_X_gate_second_pulse()
         self.add_CZ_pulse()
+        self.add_X_gate_first_pulse()
+        self.add_X_gate_second_pulse()
 
     def construct_grover_op_circuit(self):
+        self.circuit.barrier([0, 1])
         self.construct_zf_circuit()
+        self.circuit.barrier([0, 1])
         self.circuit.h(list(range(0, 2)))
+        self.circuit.barrier([0, 1])
         self.construct_zo_circuit()
+        self.circuit.barrier([0, 1])
         self.circuit.h(list(range(0, 2)))
+        self.circuit.barrier([0, 1])
         return
 
     def construct_grover_op_pulse(self):
@@ -394,19 +417,22 @@ class Grover(NMRalgorithm):
 
     def set_function(self,
                      database: List):
-        assert len(database) == 2
+        # assert len(database) == 2
         self._database = database
 
     def plot_measure_all(self):
         self.circuit.clear()
         self.circuit.x(1)
+        self.circuit.barrier([0, 1])
         self.circuit.h(list(range(0, 2)))
+        self.circuit.barrier([0, 1])
         '''
         Construct grover circuit many times
         '''
         for i in range(self.grover_step):
             self.construct_grover_op_circuit()
 
+        self.circuit.x(0)
         self.circuit.measure_all()
 
         # Use Aer's qasm_simulator
@@ -445,13 +471,32 @@ class Grover(NMRalgorithm):
         sorted_states = sorted(probabilities.keys())
         sorted_probs = [probabilities[state] for state in sorted_states]
 
+        index = -1
+        bitstr = ""
+        for i in range(0, 4):
+            if self._database[i] == 1:
+                if i==0:
+                    bitstr="00"
+                elif i==1:
+                    bitstr="01"
+                elif i==2:
+                    bitstr="10"
+                elif i==3:
+                    bitstr="11"
+
+
+
         # Plotting using matplotlib
         plt.bar(sorted_states, sorted_probs)
         plt.xlabel('State')
         plt.ylabel('Probability')
-        plt.title('Measurement result of Grover for f{}{}(Grover Step:{})'.format(self._database[0], self._database[1],
+        plt.title('Measurement result of Grover for f{}(Grover Step:{})'.format(bitstr,
                                                                                   self.grover_step))
-        plt.savefig("Figure/GroverSimu{}{}".format(self._database[0], self._database[1]))
+
+
+        print("bitstr")
+        print(bitstr)
+        plt.savefig("Figure/Grover/{}/GroverSimu{}".format(bitstr, bitstr))
         plt.show()
 
 
@@ -526,12 +571,20 @@ def permute_DJ(uf):
 
 
 def permute_grover(db):
+    none_zero_index = db[0] * 2 + db[1]
+    print(none_zero_index)
+
+    database = [0, 0, 0, 0]
+    database[none_zero_index] = 1
+
     grover = Grover()
     grover.set_grover_step(1)
-    grover.set_function(db)
+    grover.set_function(database)
 
     grover.construct_circuit()
     grover.calculate_result_circuit()
+
+    grover.plot_measure_all()
 
     '''
     First, calculate the result without permutation
@@ -614,7 +667,7 @@ def DJ_print_pulse(uf):
 
 
 if __name__ == "__main__":
-    # DJ_print_pulse([0, 0])
+    #DJ_print_pulse([0, 0])
 
     # permute_DJ([1,1])
-    permute_grover([0, 0])
+    permute_grover([1, 0])
