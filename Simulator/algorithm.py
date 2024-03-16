@@ -34,36 +34,42 @@ class NMRalgorithm:
         self.NMRsample.add_pulse(BarrierPulse(name="P1"))
         self.NMRsample.add_p1_perm_pulse()
         self.NMRsample.add_pulse(BarrierPulse(name="End P1"))
+
     def add_p2_perm_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="P2"))
         self.NMRsample.add_p2_perm_pulse()
-        self.NMRsample.add_pulse(BarrierPulse(name="End P2"))
+        self.NMRsample.add_pulse(BarrierPulse(name="P2", endpulse=True))
 
     def add_X_gate_first_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="X1"))
         self.NMRsample.add_X_gate_first_pulse()
-        self.NMRsample.add_pulse(BarrierPulse(name="End X1"))
+        self.NMRsample.add_pulse(BarrierPulse(name="X1", endpulse=True))
+
     def add_X_gate_second_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="X2"))
         self.NMRsample.add_X_gate_second_pulse()
-        self.NMRsample.add_pulse(BarrierPulse(name="End X2"))
+        self.NMRsample.add_pulse(BarrierPulse(name="X2", endpulse=True))
 
     def add_H_gate_first_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H1"))
         self.NMRsample.add_H_gate_first_pulse(approximate=self.approximate)
-        self.NMRsample.add_pulse(BarrierPulse(name="End H1"))
+        self.NMRsample.add_pulse(BarrierPulse(name="H1", endpulse=True))
+
     def add_H_gate_second_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H2"))
         self.NMRsample.add_H_gate_second_pulse(approximate=self.approximate)
-        self.NMRsample.add_pulse(BarrierPulse(name="End H2"))
+        self.NMRsample.add_pulse(BarrierPulse(name="H2", endpulse=True))
+
     def add_CZ_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="CZ(H,C)"))
         self.NMRsample.add_CZ_pulse(approximate=self.approximate, Hcontrol=True)
-        self.NMRsample.add_pulse(BarrierPulse(name="End CZ(H,C)"))
+        self.NMRsample.add_pulse(BarrierPulse(name="CZ(H,C)", endpulse=True))
+
     def add_CNOT_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="CNOT(H,C)"))
         self.NMRsample.add_CNOT_pulse(approximate=self.approximate, Hcontrol=True)
-        self.NMRsample.add_pulse(BarrierPulse(name="End CNOT(H,C)"))
+        self.NMRsample.add_pulse(BarrierPulse(name="CNOT(H,C)", endpulse=True))
+
     def plot_measure_all(self):
         raise NotImplementedError
 
@@ -684,7 +690,7 @@ def Grover_print_pulse(uf):
 
 
 if __name__ == "__main__":
-    #DJ_print_pulse([0, 0])
+    # DJ_print_pulse([0, 0])
 
     # permute_DJ([1,1])
     # permute_grover([1, 0])

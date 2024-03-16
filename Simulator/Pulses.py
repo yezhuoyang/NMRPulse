@@ -67,14 +67,18 @@ class pulse:
 
 class BarrierPulse(pulse):
 
-    def __init__(self, name):
+    def __init__(self, name, endpulse=False):
         self.name = name
+        self.endpulse=endpulse
 
     def get_matrix(self, *params):
         raise NotImplementedError
 
     def __str__(self):
-        return "----Pulse for {} gate:------".format(self.name)
+        if not self.endpulse:
+            return "----------Pulse for {} gate:----------".format(self.name)
+        else:
+            return "------Pulse for {} gate end Here------".format(self.name)
 
 
 '''

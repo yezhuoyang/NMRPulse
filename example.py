@@ -726,6 +726,13 @@ def spectrum_only_d():
     NMRsample.read_and_plot("Figure/spectrumd-")
 
 
+
+
+from Simulator.algorithm import *
+
+
+
+
 if __name__ == "__main__":
     # pulse_length_change()
     # approx_hadamard_carbon_pulse()
@@ -750,5 +757,6 @@ if __name__ == "__main__":
     # spectrum_only_d()
 
     # P1_pulse()
-    CNOT_all_cases()
-    ApproxCNOT_all_cases()
+    #CNOT_all_cases()
+    #ApproxCNOT_all_cases()
+    Grover_print_pulse([1, 0, 0, 0])
