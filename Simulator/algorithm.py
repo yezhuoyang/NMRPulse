@@ -674,6 +674,7 @@ def DJ_print_pulse(uf):
 
 def Grover_print_pulse(uf):
     GV = Grover()
+    GV.set_prem_value(1)
     '''
     Initialize the input function
     f1:uf=[1,0,0,0]

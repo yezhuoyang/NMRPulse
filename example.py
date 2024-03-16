@@ -647,7 +647,6 @@ def ApproxCNOT_all_cases():
     pseudo_pure_state([1, 1], add_CNOT=False, add_approx_CNOT=True)
 
 
-
 def spectrum_only_a():
     '''
     Initialize the chloroform instance
@@ -726,12 +725,13 @@ def spectrum_only_d():
     NMRsample.read_and_plot("Figure/spectrumd-")
 
 
+def plot_data():
+    NMRsample = chloroform()
+    NMRsample.load_data_and_plot("C:/Users/73747/PycharmProjects/NMRPulse/data/DJ/f1/f1_C_P0.csv")
+    # NMRsample.read_and_plot("C:/Users/73747/PycharmProjects/NMRPulse/data/DJ/f1/f1_C_P0.csv")
 
 
 from Simulator.algorithm import *
-
-
-
 
 if __name__ == "__main__":
     # pulse_length_change()
@@ -750,13 +750,14 @@ if __name__ == "__main__":
 
     # approx_CNOT()
 
-    #pseudo_pure_state([1, 1], add_CNOT=True)
+    # pseudo_pure_state([1, 1], add_CNOT=True)
     # spectrum_only_a()
     # spectrum_only_b()
     # spectrum_only_c()
     # spectrum_only_d()
 
     # P1_pulse()
-    #CNOT_all_cases()
-    #ApproxCNOT_all_cases()
-    Grover_print_pulse([1, 0, 0, 0])
+    # CNOT_all_cases()
+    # ApproxCNOT_all_cases()
+    # Grover_print_pulse([1, 0, 0, 0])
+    plot_data()

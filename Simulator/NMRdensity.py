@@ -1,7 +1,15 @@
 import numpy as np
 from Simulator.Pulses import pulse, pulseSingle, pulseTwo, delayTime, BarrierPulse
 from Simulator.params import *
-import csv
+import pandas as pd
+from Simulator.util import *
+
+
+def thermal_equilibrium_density():
+    thermal_density = 1 / 4 * np.identity(4, dtype=complex) + 10 ** (-4) * np.array(
+        [[5, 0, 0, 0], [0, 3, 0, 0], [0, 0, -3, 0], [0, 0, 0, -5]], dtype=complex)
+
+    return thermal_density
 
 
 class chloroform:
@@ -53,9 +61,33 @@ class chloroform:
         self._proton_freq_domain = []
         self._proton_freq_ppm = []
 
+        '''
+        Store the real ppm data and the 
+        spectrum data for proton
+        '''
+        self._data_proton_ppm = []
+        self._data_proton_freq_domain_real = []
+        self._data_proton_peaks_real = []
+        self._data_proton_peaks_pos_real = []
+        self._data_proton_freq_domain_imag = []
+        self._data_proton_peaks_imag = []
+        self._data_proton_peaks_pos_imag = []
+
         self._carbon_time_domain = []
         self._carbon_freq_domain = []
         self._carbon_freq_ppm = []
+
+        '''
+        Store the real ppm data and the 
+        spectrum data for proton
+        '''
+        self._data_carbon_ppm = []
+        self._data_carbon_freq_domain_real = []
+        self._data_carbon_peaks_real = []
+        self._data_carbon_peaks_pos_real = []
+        self._data_carbon_freq_domain_imag = []
+        self._data_carbon_peaks_imag = []
+        self._data_carbon_peaks_pos_imag = []
 
         self._density = np.zeros((4, 4), dtype=complex)
         self._density[0][0] = 0
@@ -89,14 +121,8 @@ class chloroform:
     Calculate the thermal equilibrium density density matrix 
     '''
 
-    def thermal_equilibrium_density(self):
-        thermal_density = 1 / 4 * np.identity(4, dtype=complex) + 10 ** (-4) * np.array(
-            [[5, 0, 0, 0], [0, 3, 0, 0], [0, 0, -3, 0], [0, 0, 0, -5]], dtype=complex)
-
-        return thermal_density
-
     def set_thermal_equilibrium(self):
-        self._density = self.thermal_equilibrium_density()
+        self._density = thermal_equilibrium_density()
 
     def reset_proton_params(self,
                             T1p,
@@ -427,8 +453,87 @@ class chloroform:
         self.show_carbon_spectrum_real(74, 80, store=True,
                                        path=path + "carbon.png")
 
-    def load_data_and_plot(self, path):
-        pass
+    def determine_peaks(self, isproton=True, isreal=True):
+        if isproton:
+            if isreal:
+                positions, values = find_two_largest_peaks(self._data_proton_ppm, self._data_proton_freq_domain_real)
+                self._data_proton_peaks_real = values
+                self._data_proton_peaks_pos_real = positions
+            else:
+                positions, values = find_two_largest_peaks(self._data_proton_ppm, self._data_proton_freq_domain_imag)
+                self._data_proton_peaks_imag = values
+                self._data_proton_peaks_pos_imag = positions
+        else:
+            if isreal:
+                positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_real)
+                self._data_carbon_peaks_real = values
+                self._data_carbon_peaks_pos_real = positions
+            else:
+                positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_imag)
+                self._data_carbon_peaks_imag = values
+                self._data_carbon_peaks_pos_imag = positions
+
+    '''
+    Load the spectrum data from a give path
+    '''
+
+    def load_data_and_plot(self, path, isproton=True, store=False,storePath=None):
+        # Load the CSV file into a DataFrame
+        data = pd.read_csv(path, header=None)
+        data.columns = ['Frequency (ppm)', 'Real Part', 'Imaginary Part']
+
+        # Plotting
+        plt.figure(figsize=(10, 6))
+
+        if isproton:
+            self._data_proton_ppm = list(data['Frequency (ppm)'])
+            self._data_proton_freq_domain_real = list(data['Real Part'])
+            self._data_proton_freq_domain_imag = list(data['Imaginary Part'])
+            # Find the peaks for real and imaginary data
+            self.determine_peaks(isproton=True, isreal=True)
+            self.determine_peaks(isproton=True, isreal=False)
+        else:
+            self._data_carbon_ppm = list(data['Frequency (ppm)'])
+            self._data_carbon_freq_domain_real = list(data['Real Part'])
+            self._data_carbon_freq_domain_imag = list(data['Imaginary Part'])
+            # Find the peaks for real and imaginary data
+            self.determine_peaks(isproton=False, isreal=True)
+            self.determine_peaks(isproton=False, isreal=False)
+        # Plot the real part of the spectrum
+        plt.plot(data['Frequency (ppm)'], data['Real Part'], label='Real Part', color='blue')
+
+        if isproton:
+            plt.scatter(self._data_proton_peaks_pos_real[0], self._data_proton_peaks_real[0], color="red",
+                        label="First peak f={}, p={}".format(self._data_proton_peaks_pos_real[0],
+                                                             self._data_proton_peaks_real[0]))
+            plt.scatter(self._data_proton_peaks_pos_real[1], self._data_proton_peaks_real[1], color="red",
+                        label="First peak f={}, p={}".format(self._data_proton_peaks_pos_real[1],
+                                                             self._data_proton_peaks_real[1]))
+        else:
+            plt.scatter(self._data_carbon_peaks_pos_real[0], self._data_carbon_peaks_real[0], color="red",
+                        label="First peak f={}, p={}".format(self._data_carbon_peaks_pos_real[0],
+                                                             self._data_carbon_peaks_real[0]))
+            plt.scatter(self._data_carbon_peaks_pos_real[1], self._data_carbon_peaks_real[1], color="red",
+                        label="First peak f={}, p={}".format(self._data_carbon_peaks_pos_real[1],
+                                                             self._data_carbonpeaks_real[1]))
+        # Optionally, plot the imaginary part of the spectrum on the same plot
+        # Uncomment the next line if you want to include the imaginary part in the plot
+        # plt.plot(data['Frequency (ppm)'], data['Imaginary Part'], label='Imaginary Part', color='red')
+
+        # Adding plot title and labels
+        if isproton:
+            plt.title('Real part of proton NMR Spectrum')
+        else:
+            plt.title('Real part of carbon NMR Spectrum')
+        plt.xlabel('Frequency (ppm)')
+        plt.ylabel('Spectrum Intensity')
+        plt.legend()
+
+        if store:
+            plt.savefig(storePath)
+
+        # Display the plot
+        plt.show()
 
     def show_proton_fid_real(self, maxtime, store=False, path=None, title="Proton FID real", miny=-1, maxy=1):
         plt.plot(self._times, np.real(self._proton_time_domain), label="Proton test_fid.py(Real part)")
