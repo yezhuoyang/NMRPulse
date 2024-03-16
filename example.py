@@ -514,98 +514,6 @@ uf: A list of the state input
 
 def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     assert not (add_CNOT and add_approx_CNOT)
-    '''
-    Initialize the chloroform instance
-    '''
-    NMRsample = chloroform()
-
-    NMRsample.set_thermal_equilibrium()
-
-    '''
-    Initialize the initial state 00,01,10 or 11
-    '''
-    if uf[0] == 1:
-        NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
-    if uf[1] == 1:
-        NMRsample.add_pulse(pulseSingle(1, pl90C, wC))
-
-    NMRsample.evolve_all_pulse()
-
-    NMRsample.read_and_plot("Figure/pseudoP0")
-
-    density0 = NMRsample.get_density()
-
-    NMRsample.set_thermal_equilibrium()
-    NMRsample.set_pulses([])
-
-    '''
-    Add P1 permutation
-    '''
-
-    NMRsample.add_p1_perm_pulse()
-
-    '''
-    Initialize the initial state 00,01,10 or 11
-    '''
-    if uf[0] == 1:
-        NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
-    if uf[1] == 1:
-        NMRsample.add_pulse(pulseSingle(1, pl90C, wC))
-
-    NMRsample.evolve_all_pulse()
-
-    NMRsample.read_and_plot("Figure/pseudoP1")
-
-    # np.set_printoptions(precision=2)
-    # print("P1 matrix")
-    # print(NMRsample.get_pulse_unitary())
-
-    density1 = NMRsample.get_density()
-
-    NMRsample.set_thermal_equilibrium()
-    NMRsample.set_pulses([])
-
-    '''
-    Add P2 permutation
-    '''
-
-    NMRsample.add_p2_perm_pulse()
-
-    '''
-    Initialize the initial state 00,01,10 or 11
-    '''
-    if uf[0] == 1:
-        NMRsample.add_pulse(pulseSingle(0, pl90H, wH))
-    if uf[1] == 1:
-        NMRsample.add_pulse(pulseSingle(1, pl90C, wC))
-
-    NMRsample.evolve_all_pulse()
-
-    # print("P2 matrix")
-    # print(NMRsample.get_pulse_unitary())
-
-    NMRsample.read_and_plot("Figure/pseudoP1")
-
-    density2 = NMRsample.get_density()
-
-    pseudo_pure_density = (density0 + density1 + density2) / 3
-
-    new_NMRsample = chloroform()
-    new_NMRsample.set_density(pseudo_pure_density)
-
-    new_NMRsample.read_and_plot("Figure/pseudoaverage")
-
-    print(pseudo_pure_density)
-
-
-'''
-Simulate the result of pseudo pure state
-uf: A list of the state input
-'''
-
-
-def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
-    assert not (add_CNOT and add_approx_CNOT)
 
     ufstring = str(uf[0]) + str(uf[1])
 
@@ -728,6 +636,21 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     print(pseudo_pure_density)
 
 
+def CNOT_all_cases():
+    pseudo_pure_state([0, 0], add_CNOT=True, add_approx_CNOT=False)
+    pseudo_pure_state([0, 1], add_CNOT=True, add_approx_CNOT=False)
+    pseudo_pure_state([1, 0], add_CNOT=True, add_approx_CNOT=False)
+    pseudo_pure_state([1, 1], add_CNOT=True, add_approx_CNOT=False)
+
+
+def ApproxCNOT_all_cases():
+    pseudo_pure_state([0, 0], add_CNOT=False, add_approx_CNOT=True)
+    pseudo_pure_state([0, 1], add_CNOT=False, add_approx_CNOT=True)
+    pseudo_pure_state([1, 0], add_CNOT=False, add_approx_CNOT=True)
+    pseudo_pure_state([1, 1], add_CNOT=False, add_approx_CNOT=True)
+
+
+
 def spectrum_only_a():
     '''
     Initialize the chloroform instance
@@ -823,10 +746,12 @@ if __name__ == "__main__":
 
     # approx_CNOT()
 
-    pseudo_pure_state([1, 1], add_CNOT=True)
+    #pseudo_pure_state([1, 1], add_CNOT=True)
     # spectrum_only_a()
     # spectrum_only_b()
     # spectrum_only_c()
     # spectrum_only_d()
 
     # P1_pulse()
+    CNOT_all_cases()
+    ApproxCNOT_all_cases()

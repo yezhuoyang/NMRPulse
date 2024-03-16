@@ -33,35 +33,37 @@ class NMRalgorithm:
     def add_p1_perm_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="P1"))
         self.NMRsample.add_p1_perm_pulse()
-
+        self.NMRsample.add_pulse(BarrierPulse(name="End P1"))
     def add_p2_perm_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="P2"))
         self.NMRsample.add_p2_perm_pulse()
+        self.NMRsample.add_pulse(BarrierPulse(name="End P2"))
 
     def add_X_gate_first_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="X1"))
         self.NMRsample.add_X_gate_first_pulse()
-
+        self.NMRsample.add_pulse(BarrierPulse(name="End X1"))
     def add_X_gate_second_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="X2"))
         self.NMRsample.add_X_gate_second_pulse()
+        self.NMRsample.add_pulse(BarrierPulse(name="End X2"))
 
     def add_H_gate_first_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H1"))
         self.NMRsample.add_H_gate_first_pulse(approximate=self.approximate)
-
+        self.NMRsample.add_pulse(BarrierPulse(name="End H1"))
     def add_H_gate_second_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H2"))
         self.NMRsample.add_H_gate_second_pulse(approximate=self.approximate)
-
+        self.NMRsample.add_pulse(BarrierPulse(name="End H2"))
     def add_CZ_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="CZ(H,C)"))
         self.NMRsample.add_CZ_pulse(approximate=self.approximate, Hcontrol=True)
-
+        self.NMRsample.add_pulse(BarrierPulse(name="End CZ(H,C)"))
     def add_CNOT_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="CNOT(H,C)"))
         self.NMRsample.add_CNOT_pulse(approximate=self.approximate, Hcontrol=True)
-
+        self.NMRsample.add_pulse(BarrierPulse(name="End CNOT(H,C)"))
     def plot_measure_all(self):
         raise NotImplementedError
 
@@ -475,24 +477,21 @@ class Grover(NMRalgorithm):
         bitstr = ""
         for i in range(0, 4):
             if self._database[i] == 1:
-                if i==0:
-                    bitstr="00"
-                elif i==1:
-                    bitstr="01"
-                elif i==2:
-                    bitstr="10"
-                elif i==3:
-                    bitstr="11"
-
-
+                if i == 0:
+                    bitstr = "00"
+                elif i == 1:
+                    bitstr = "01"
+                elif i == 2:
+                    bitstr = "10"
+                elif i == 3:
+                    bitstr = "11"
 
         # Plotting using matplotlib
         plt.bar(sorted_states, sorted_probs)
         plt.xlabel('State')
         plt.ylabel('Probability')
         plt.title('Measurement result of Grover for f{}(Grover Step:{})'.format(bitstr,
-                                                                                  self.grover_step))
-
+                                                                                self.grover_step))
 
         print("bitstr")
         print(bitstr)
@@ -651,6 +650,7 @@ def permute_grover(db):
 
 def DJ_print_pulse(uf):
     DJ = Djalgorithm()
+    DJ.set_prem_value(1)
     '''
     Initialize the input function
     f1:uf=[0,0]
@@ -666,8 +666,26 @@ def DJ_print_pulse(uf):
     DJ.print_pulses()
 
 
+def Grover_print_pulse(uf):
+    GV = Grover()
+    '''
+    Initialize the input function
+    f1:uf=[1,0,0,0]
+    f2:uf=[0,1,0,0]
+    f3:uf=[0,0,1,0]
+    f4:uf=[0,0,0,1]
+    '''
+    GV.set_function(uf)
+    GV.construct_pulse()
+    '''
+    Print the real Spinsolve pulses
+    '''
+    GV.print_pulses()
+
+
 if __name__ == "__main__":
-    #DJ_print_pulse([0, 0])
+    DJ_print_pulse([0, 0])
 
     # permute_DJ([1,1])
-    permute_grover([1, 0])
+    # permute_grover([1, 0])
+    #Grover_print_pulse([1, 0, 0, 0])
