@@ -1,6 +1,6 @@
 import numpy as np
-from Pulses import pulse, pulseSingle, pulseTwo, delayTime, BarrierPulse
-from params import *
+from Simulator.Pulses import pulse, pulseSingle, pulseTwo, delayTime, BarrierPulse
+from Simulator.params import *
 import csv
 
 

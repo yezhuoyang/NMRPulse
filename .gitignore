@@ -1,2 +1,4 @@
 .idea/
 .__pycache__/
+Simulator/__pycache__/
+.ipynb_checkpoints/

@@ -1,5 +1,5 @@
 import numpy as np
-from Pulses import *
+from Simulator.Pulses import *
 
 
 class Optimizer:

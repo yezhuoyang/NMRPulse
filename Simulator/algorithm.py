@@ -3,8 +3,8 @@ from typing import List
 import qiskit
 from qiskit_aer import AerSimulator
 
-from NMRdensity import *
-from Pulses import *
+from Simulator.NMRdensity import *
+from Simulator.Pulses import *
 
 
 class NMRalgorithm:
