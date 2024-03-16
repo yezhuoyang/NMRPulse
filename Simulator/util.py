@@ -15,32 +15,37 @@ def norm_2_distance(matrix1: np.ndarray, matrix2: np.ndarray):
     return np.abs(np.sum((matrix1 - matrix2) ** 2))
 
 
-
 def find_two_largest_peaks(x, y):
     # Convert to numpy arrays for processing
     x = np.array(x)
     y = np.array(y)
 
-    # Find peaks
-    peaks, _ = find_peaks(y, distance=20)  # The distance parameter may need to be adjusted
+    # Find all peaks, both positive and negative, by finding peaks on the original and the negated signal
+    positive_peaks, _ = find_peaks(y, distance=20)
+    negative_peaks, _ = find_peaks(-y, distance=20)
 
-    # Sort the peaks based on the peak heights in descending order
-    sorted_peak_indices = np.argsort(y[peaks])[::-1]
+    # Combine the found positive and negative peaks
+    all_peaks = np.concatenate((positive_peaks, negative_peaks))
 
-    # Get the indices of the two largest peaks
-    if len(sorted_peak_indices) >= 2:
-        # If there are two or more peaks, take the first two
-        top_peaks_indices = sorted_peak_indices[:2]
-    elif len(sorted_peak_indices) == 1:
+    # Check if we have found at least two peaks
+    if len(all_peaks) >= 2:
+        # Get the absolute values of the peaks to sort them
+        peak_values = y[all_peaks]
+        abs_peak_values = np.abs(peak_values)
+
+        # Sort the peaks by the absolute values in descending order and take the indices of the two largest
+        largest_peaks_indices = all_peaks[np.argsort(abs_peak_values)[-2:]]
+
+    elif len(all_peaks) == 1:
         # If there's only one peak, take it
-        top_peaks_indices = sorted_peak_indices
+        largest_peaks_indices = all_peaks
     else:
         # If there are no peaks, return empty arrays
         return np.array([]), np.array([])
 
-    # Find the positions of the two largest peaks
-    peak_positions = x[peaks][top_peaks_indices]
-    peak_values = y[peaks][top_peaks_indices]
+    # Find the positions and values of the two largest absolute peaks
+    peak_positions = x[largest_peaks_indices]
+    peak_values = y[largest_peaks_indices]
 
     return list(peak_positions), list(peak_values)
 

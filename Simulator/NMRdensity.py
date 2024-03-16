@@ -12,6 +12,21 @@ def thermal_equilibrium_density():
     return thermal_density
 
 
+'''
+Only keep the data belonging to minppm<f<maxppm
+'''
+
+
+def keep_ppm_range(minppm, maxppm, data_proton_ppm, data_proton_freq_domain_real, data_proton_freq_domain_imag):
+    filtered_ppms = [k for k in data_proton_ppm if minppm < k < maxppm]
+
+    filtered_real_data = [v1 for k, v1 in zip(data_proton_ppm, data_proton_freq_domain_real) if minppm < k < maxppm]
+
+    filtered_imag_data = [v2 for k, v2 in zip(data_proton_ppm, data_proton_freq_domain_imag) if minppm < k < maxppm]
+
+    return filtered_ppms, filtered_real_data, filtered_imag_data
+
+
 class chloroform:
     '''
     Initialize a chloroform instance
@@ -477,7 +492,7 @@ class chloroform:
     Load the spectrum data from a give path
     '''
 
-    def load_data_and_plot(self, path, isproton=True, store=False,storePath=None):
+    def load_data_and_plot(self, path, minppm=3, maxppm=10, isproton=True, store=False, storePath=None):
         # Load the CSV file into a DataFrame
         data = pd.read_csv(path, header=None)
         data.columns = ['Frequency (ppm)', 'Real Part', 'Imaginary Part']
@@ -486,21 +501,24 @@ class chloroform:
         plt.figure(figsize=(10, 6))
 
         if isproton:
-            self._data_proton_ppm = list(data['Frequency (ppm)'])
-            self._data_proton_freq_domain_real = list(data['Real Part'])
-            self._data_proton_freq_domain_imag = list(data['Imaginary Part'])
+            self._data_proton_ppm, self._data_proton_freq_domain_real, self._data_proton_freq_domain_imag = (
+                keep_ppm_range(minppm, maxppm, list(data['Frequency (ppm)']), list(data['Real Part']),
+                               list(data['Imaginary Part'])))
+
             # Find the peaks for real and imaginary data
             self.determine_peaks(isproton=True, isreal=True)
             self.determine_peaks(isproton=True, isreal=False)
+            plt.plot(self._data_proton_ppm, self._data_proton_freq_domain_real, label='Real Part', color='blue')
+
         else:
-            self._data_carbon_ppm = list(data['Frequency (ppm)'])
-            self._data_carbon_freq_domain_real = list(data['Real Part'])
-            self._data_carbon_freq_domain_imag = list(data['Imaginary Part'])
+            self._data_carbon_ppm, self._data_carbon_freq_domain_real, self._data_carbon_freq_domain_imag = (
+                keep_ppm_range(minppm, maxppm, list(data['Frequency (ppm)']), list(data['Real Part']),
+                               list(data['Imaginary Part'])))
             # Find the peaks for real and imaginary data
             self.determine_peaks(isproton=False, isreal=True)
             self.determine_peaks(isproton=False, isreal=False)
-        # Plot the real part of the spectrum
-        plt.plot(data['Frequency (ppm)'], data['Real Part'], label='Real Part', color='blue')
+            # Plot the real part of the spectrum
+            plt.plot(self._data_carbon_ppm, self._data_carbon_freq_domain_real, label='Real Part', color='blue')
 
         if isproton:
             plt.scatter(self._data_proton_peaks_pos_real[0], self._data_proton_peaks_real[0], color="red",
