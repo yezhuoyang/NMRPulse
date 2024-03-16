@@ -533,7 +533,7 @@ class chloroform:
                                                              self._data_carbon_peaks_real[0]))
             plt.scatter(self._data_carbon_peaks_pos_real[1], self._data_carbon_peaks_real[1], color="red",
                         label="First peak f={}, p={}".format(self._data_carbon_peaks_pos_real[1],
-                                                             self._data_carbonpeaks_real[1]))
+                                                             self._data_carbon_peaks_real[1]))
         # Optionally, plot the imaginary part of the spectrum on the same plot
         # Uncomment the next line if you want to include the imaginary part in the plot
         # plt.plot(data['Frequency (ppm)'], data['Imaginary Part'], label='Imaginary Part', color='red')
