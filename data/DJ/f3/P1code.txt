@@ -1,0 +1,56 @@
+initpp(dir)
+############Pulse for P1 gate:###########
+pulse(2,a90C,0,d90C)
+delay(dEvolution)
+pulse(1,a90HC,3,freq1H,2,a90C,0,freq13C,d90C)
+delay(dEvolution)
+pulse(1,a90H,3,d90H)
+delay(0.25)
+############Pulse for End P1 gate:###########
+############Pulse for X2 gate:###########
+pulse(2,a90C,0,d180C)
+delay(0.25)
+###########Pulse for X2 gate end Here####
+############Pulse for H1 gate:###########
+pulse(1,a90H,3,d90H)
+delay(0.25)
+###########Pulse for H1 gate end Here####
+############Pulse for H2 gate:###########
+pulse(2,a90C,3,d90C)
+delay(0.25)
+###########Pulse for H2 gate end Here####
+############Pulse for H1 gate:###########
+pulse(1,a90H,3,d90H)
+delay(0.25)
+###########Pulse for H1 gate end Here####
+############Pulse for CNOT(H,C) gate:###########
+pulse(2,a90C,3,d90C)
+delay(0.25)
+pulse(1,a90H,2,d90H)
+delay(0.25)
+pulse(1,a90H,1,d90H)
+delay(0.25)
+pulse(1,a90H,0,d90H)
+delay(0.25)
+pulse(2,a90C,2,d90C)
+delay(0.25)
+pulse(2,a90C,1,d90C)
+delay(0.25)
+pulse(2,a90C,0,d90C)
+delay(dEvolution)
+pulse(2,a90C,3,d90C)
+delay(0.25)
+###########Pulse for CNOT(H,C) gate end Here####
+############Pulse for H1 gate:###########
+pulse(1,a90H,3,d90H)
+delay(0.25)
+###########Pulse for H1 gate end Here####
+############Pulse for H1 gate:###########
+pulse(1,a90H,3,d90H)
+delay(0.25)
+###########Pulse for H1 gate end Here####
+############Pulse for H2 gate:###########
+pulse(2,a90C,3,d90C)
+###########Pulse for H2 gate end Here####
+################################
+parList=endpp()

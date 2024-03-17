@@ -69,16 +69,16 @@ class BarrierPulse(pulse):
 
     def __init__(self, name, endpulse=False):
         self.name = name
-        self.endpulse=endpulse
+        self.endpulse = endpulse
 
     def get_matrix(self, *params):
         raise NotImplementedError
 
     def __str__(self):
         if not self.endpulse:
-            return "----------Pulse for {} gate:----------".format(self.name)
+            return "############Pulse for {} gate:###########".format(self.name)
         else:
-            return "------Pulse for {} gate end Here------".format(self.name)
+            return "###########Pulse for {} gate end Here####".format(self.name)
 
 
 '''
@@ -142,9 +142,21 @@ class pulseSingle(pulse):
 
     def __str__(self):
         if self._is_carbon:
-            return "pulse(2,a90C,{},{}d90C)".format(self._channel, (self._length / pl90C))
+            prop = self._length / pl90C
+            if prop == 0.5:
+                return "pulse(2,a90C,{},d90C)".format(self._channel)
+            elif prop == 1:
+                return "pulse(2,a90C,{},d180C)".format(self._channel)
+            else:
+                return "pulse(2,a90C,{},{}d90C)".format(self._channel, prop)
         else:
-            return "pulse(1,a90H,{},{}d90H)".format(self._channel, (self._length / pl90H))
+            prop = self._length / pl90H
+            if prop == 0.5:
+                return "pulse(1,a90H,{},d90H)".format(self._channel)
+            elif prop == 1:
+                return "pulse(1,a90H,{},d180H)".format(self._channel)
+            else:
+                return "pulse(1,a90H,{},{}d90H)".format(self._channel, prop)
 
 
 '''
@@ -219,7 +231,7 @@ class pulseTwo(pulse):
             return np.kron(matrix2, matrix1)
 
     def __str__(self):
-        return "pulse(2,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel1, self._channel2)
+        return "pulse(1,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel1, self._channel2)
 
 
 class delayTime(pulse):
@@ -229,13 +241,18 @@ class delayTime(pulse):
           delaytime: The delaytime
     '''
 
-    def __init__(self, delaytime):
+    def __init__(self, delaytime, isgapdelay=False):
         super().__init__()
         self._delaytime = delaytime
+        self._isgapdelay = isgapdelay
 
     def get_matrix(self, Jfreq):
         theta = np.pi * Jfreq * self._delaytime
         return Rzz_matrix(theta)
 
     def __str__(self):
-        return "delay({:.2f})".format(self._delaytime * 10 ** (3))
+        if not self._isgapdelay:
+            return "delay(dEvolution)"
+        else:
+            return "delay(0.25)"
+        # return "delay({:.2f})".format(self._delaytime * 10 ** (3))

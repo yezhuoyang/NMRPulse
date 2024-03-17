@@ -1,0 +1,4 @@
+initpp(dir)
+pulse(1,a90H,0,d180H)
+################################
+parList=endpp()

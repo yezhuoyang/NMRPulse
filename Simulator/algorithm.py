@@ -52,12 +52,12 @@ class NMRalgorithm:
 
     def add_H_gate_first_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H1"))
-        self.NMRsample.add_H_gate_first_pulse(approximate=self.approximate)
+        self.NMRsample.add_H_gate_first_pulse(approximate=True)
         self.NMRsample.add_pulse(BarrierPulse(name="H1", endpulse=True))
 
     def add_H_gate_second_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H2"))
-        self.NMRsample.add_H_gate_second_pulse(approximate=self.approximate)
+        self.NMRsample.add_H_gate_second_pulse(approximate=True)
         self.NMRsample.add_pulse(BarrierPulse(name="H2", endpulse=True))
 
     def add_CZ_pulse(self):
@@ -92,8 +92,11 @@ class NMRalgorithm:
     def calculate_result(self):
         raise NotImplementedError
 
+    def insert_delay(self):
+        self.NMRsample.insert_delay()
+
     def print_pulses(self):
-        self.NMRsample.print_pulses()
+        return self.NMRsample.print_pulses()
 
     def show_spectrum(self, path: str, title: str):
         '''
@@ -684,10 +687,87 @@ def Grover_print_pulse(uf):
     '''
     GV.set_function(uf)
     GV.construct_pulse()
+    GV.insert_delay()
     '''
     Print the real Spinsolve pulses
     '''
-    GV.print_pulses()
+    pulse_program = GV.print_pulses()
+    print("Suck!")
+    print(pulse_program)
+
+
+def generate_DJ_program(findex):
+    rootpath = "C:/Users/73747/PycharmProjects/NMRPulse/data/DJ/"
+
+    uf = []
+    if findex == 1:
+        uf = [0, 0]
+    elif findex == 2:
+        uf = [0, 1]
+    elif findex == 3:
+        uf = [1, 0]
+    elif findex == 4:
+        uf = [1, 1]
+    else:
+        assert False
+
+
+    DJ = Djalgorithm()
+    DJ.set_function(uf)
+    DJ.construct_pulse()
+    DJ.insert_delay()
+    pulse_program = DJ.print_pulses()
+    store_string_to_file(pulse_program, rootpath + "f{}/P0code.txt".format(findex))
+
+    DJ = Djalgorithm()
+    DJ.set_prem_value(1)
+    DJ.set_function(uf)
+    DJ.construct_pulse()
+    DJ.insert_delay()
+    pulse_program = DJ.print_pulses()
+    store_string_to_file(pulse_program, rootpath + "f{}/P1code.txt".format(findex))
+
+    DJ = Djalgorithm()
+    DJ.set_prem_value(2)
+    DJ.set_function(uf)
+    DJ.construct_pulse()
+    DJ.insert_delay()
+    pulse_program = DJ.print_pulses()
+    store_string_to_file(pulse_program, rootpath + "f{}/P2code.txt".format(findex))
+
+
+
+def generate_grover_program(ufstr):
+    rootpath = "C:/Users/73747/PycharmProjects/NMRPulse/data/Grover/"
+
+    index = int(ufstr[0]) * 2 + int(ufstr[1])
+    uf = [0, 0, 0, 0]
+    uf[index] = 1
+
+    print(uf)
+
+    GV = Grover()
+    GV.set_function(uf)
+    GV.construct_pulse()
+    GV.insert_delay()
+    pulse_program = GV.print_pulses()
+    store_string_to_file(pulse_program, rootpath + "{}/P0code.txt".format(ufstr))
+
+    GV = Grover()
+    GV.set_prem_value(1)
+    GV.set_function(uf)
+    GV.construct_pulse()
+    GV.insert_delay()
+    pulse_program = GV.print_pulses()
+    store_string_to_file(pulse_program, rootpath + "{}/P1code.txt".format(ufstr))
+
+    GV = Grover()
+    GV.set_prem_value(2)
+    GV.set_function(uf)
+    GV.construct_pulse()
+    GV.insert_delay()
+    pulse_program = GV.print_pulses()
+    store_string_to_file(pulse_program, rootpath + "00/P2code.txt".format(ufstr))
 
 
 if __name__ == "__main__":

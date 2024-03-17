@@ -509,7 +509,7 @@ uf: A list of the state input
 '''
 
 
-def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
+def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False, generateprogram=False):
     assert not (add_CNOT and add_approx_CNOT)
 
     ufstring = str(uf[0]) + str(uf[1])
@@ -543,6 +543,18 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     else:
         NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP0f{}".format(ufstring, ufstring))
 
+    if generateprogram:
+        NMRsample.insert_delay()
+        pulse_program = NMRsample.print_pulses()
+        if add_CNOT:
+            store_string_to_file(pulse_program, "data/Pseudo/{}/Code_CNOTpseudoP0f{}.txt".format(ufstring, ufstring))
+        elif add_approx_CNOT:
+            store_string_to_file(pulse_program,
+                                 "data/Pseudo/{}/Code_approxCNOTpseudoP0f{}.txt".format(ufstring, ufstring))
+        else:
+            store_string_to_file(pulse_program,
+                                 "data/Pseudo/{}/Code_pseudoP0f{}.txt".format(ufstring, ufstring))
+
     density0 = NMRsample.get_density()
 
     NMRsample.set_thermal_equilibrium()
@@ -575,6 +587,18 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
         NMRsample.read_and_plot("Figure/Pseudo/{}/approxCNOTpseudoP1f{}".format(ufstring, ufstring))
     else:
         NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP1f{}".format(ufstring, ufstring))
+
+    if generateprogram:
+        NMRsample.insert_delay()
+        pulse_program = NMRsample.print_pulses()
+        if add_CNOT:
+            store_string_to_file(pulse_program, "data/Pseudo/{}/Code_CNOTpseudoP1f{}.txt".format(ufstring, ufstring))
+        elif add_approx_CNOT:
+            store_string_to_file(pulse_program,
+                                 "data/Pseudo/{}/Code_approxCNOTpseudoP1f{}.txt".format(ufstring, ufstring))
+        else:
+            store_string_to_file(pulse_program,
+                                 "data/Pseudo/{}/Code_pseudoP1f{}.txt".format(ufstring, ufstring))
 
     # np.set_printoptions(precision=2)
     # print("P1 matrix")
@@ -616,6 +640,18 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     else:
         NMRsample.read_and_plot("Figure/Pseudo/{}/pseudoP2f{}".format(ufstring, ufstring))
 
+    if generateprogram:
+        NMRsample.insert_delay()
+        pulse_program = NMRsample.print_pulses()
+        if add_CNOT:
+            store_string_to_file(pulse_program, "data/Pseudo/{}/Code_CNOTpseudoP2f{}.txt".format(ufstring, ufstring))
+        elif add_approx_CNOT:
+            store_string_to_file(pulse_program,
+                                 "data/Pseudo/{}/Code_approxCNOTpseudoP2f{}.txt".format(ufstring, ufstring))
+        else:
+            store_string_to_file(pulse_program,
+                                 "data/Pseudo/{}/Code_pseudoP2f{}.txt".format(ufstring, ufstring))
+
     density2 = NMRsample.get_density()
 
     pseudo_pure_density = (density0 + density1 + density2) / 3
@@ -633,18 +669,25 @@ def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False):
     print(pseudo_pure_density)
 
 
+def pseudo_pure_all_cases():
+    pseudo_pure_state([0, 0], add_CNOT=False, add_approx_CNOT=False, generateprogram=True)
+    pseudo_pure_state([0, 1], add_CNOT=False, add_approx_CNOT=False, generateprogram=True)
+    pseudo_pure_state([1, 0], add_CNOT=False, add_approx_CNOT=False, generateprogram=True)
+    pseudo_pure_state([1, 1], add_CNOT=False, add_approx_CNOT=False, generateprogram=True)
+
+
 def CNOT_all_cases():
-    pseudo_pure_state([0, 0], add_CNOT=True, add_approx_CNOT=False)
-    pseudo_pure_state([0, 1], add_CNOT=True, add_approx_CNOT=False)
-    pseudo_pure_state([1, 0], add_CNOT=True, add_approx_CNOT=False)
-    pseudo_pure_state([1, 1], add_CNOT=True, add_approx_CNOT=False)
+    pseudo_pure_state([0, 0], add_CNOT=True, add_approx_CNOT=False, generateprogram=True)
+    pseudo_pure_state([0, 1], add_CNOT=True, add_approx_CNOT=False, generateprogram=True)
+    pseudo_pure_state([1, 0], add_CNOT=True, add_approx_CNOT=False, generateprogram=True)
+    pseudo_pure_state([1, 1], add_CNOT=True, add_approx_CNOT=False, generateprogram=True)
 
 
 def ApproxCNOT_all_cases():
-    pseudo_pure_state([0, 0], add_CNOT=False, add_approx_CNOT=True)
-    pseudo_pure_state([0, 1], add_CNOT=False, add_approx_CNOT=True)
-    pseudo_pure_state([1, 0], add_CNOT=False, add_approx_CNOT=True)
-    pseudo_pure_state([1, 1], add_CNOT=False, add_approx_CNOT=True)
+    pseudo_pure_state([0, 0], add_CNOT=False, add_approx_CNOT=True, generateprogram=True)
+    pseudo_pure_state([0, 1], add_CNOT=False, add_approx_CNOT=True, generateprogram=True)
+    pseudo_pure_state([1, 0], add_CNOT=False, add_approx_CNOT=True, generateprogram=True)
+    pseudo_pure_state([1, 1], add_CNOT=False, add_approx_CNOT=True, generateprogram=True)
 
 
 def spectrum_only_a():
@@ -767,4 +810,24 @@ if __name__ == "__main__":
     # pseudo_pure_state([1,0], add_CNOT=False, add_approx_CNOT=True)
     # pseudo_pure_state([1,1], add_CNOT=False, add_approx_CNOT=True)
 
-    permute_DJ([1, 1])
+    # permute_DJ([1, 1])
+    # strings = Grover_print_pulse([1, 0, 0, 0])
+
+    # print("SSS")
+    # print(strings)
+
+    # generate_grover_program("00")
+    # generate_grover_program("01")
+    # generate_grover_program("10")
+    # generate_grover_program("11")
+
+    # generate_DJ_program(1)
+    # generate_DJ_program(2)
+    # generate_DJ_program(3)
+    # generate_DJ_program(4)
+
+    # pseudo_pure_all_cases()
+
+    #CNOT_all_cases()
+    ApproxCNOT_all_cases()
+

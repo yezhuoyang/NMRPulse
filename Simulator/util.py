@@ -50,6 +50,17 @@ def find_two_largest_peaks(x, y):
     return list(peak_positions), list(peak_values)
 
 
+def store_string_to_file(output_string, file_path):
+    """
+    Stores a given string to a specified file.
+
+    :param output_string: The string to be stored in the file
+    :param file_path: The path of the file where the string will be stored
+    """
+    with open(file_path, 'w') as file:
+        file.write(output_string)
+
+
 
 if __name__ == "__main__":
     A = np.array([[0, 1], [1, 1j]], dtype=complex)

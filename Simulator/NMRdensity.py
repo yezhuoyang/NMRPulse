@@ -173,6 +173,30 @@ class chloroform:
         self._pulses.append(pl)
         self._pulses_evolved = False
 
+    def insert_delay(self):
+        if len(self._pulses) == 0:
+            return
+
+        new_pulses = []
+        for i in range(0, len(self._pulses) - 1):
+            new_pulses.append(self._pulses[i])
+            if isinstance(self._pulses[i], BarrierPulse):
+                continue
+
+            if not isinstance(self._pulses[i], delayTime):
+                '''
+                First, find the previous pulse that is not delay:
+                '''
+                postindex = i + 1
+                while postindex < len(self._pulses) and isinstance(self._pulses[postindex], BarrierPulse):
+                    postindex = postindex + 1
+
+                if postindex < len(self._pulses) and not isinstance(self._pulses[postindex], delayTime):
+                    new_pulses.append(delayTime(0.25, True))
+
+        new_pulses.append(self._pulses[-1])
+        self._pulses = new_pulses
+
     def set_pulses(self, pulses):
         self._pulses = pulses
 
@@ -211,6 +235,11 @@ class chloroform:
                 matrix = pulse.get_matrix(self._pl90H, self._pl90C)
                 self._pulse_unitary = np.matmul(matrix, self._pulse_unitary)
             elif isinstance(pulse, delayTime):
+                '''
+                If this is a delay(0.25) pulse,just skip
+                '''
+                if pulse._isgapdelay:
+                    continue
                 matrix = pulse.get_matrix(self._Jfreq)
                 self._pulse_unitary = np.matmul(matrix, self._pulse_unitary)
         self.evolve_density(self._pulse_unitary)
@@ -245,7 +274,7 @@ class chloroform:
     def add_X_gate_second_pulse(self):
         self.add_pulse(pulseSingle(0, pl90C, wC))
 
-    def add_H_gate_first_pulse(self, approximate=False):
+    def add_H_gate_first_pulse(self, approximate=True):
         if not approximate:
             self.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
             self.add_pulse(pulseSingle(0, 1 * pl90H, wH))
@@ -253,7 +282,7 @@ class chloroform:
         else:
             self.add_pulse(pulseSingle(3, 1 / 2 * pl90H, wH))
 
-    def add_H_gate_second_pulse(self, approximate=False):
+    def add_H_gate_second_pulse(self, approximate=True):
         if not approximate:
             self.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
             self.add_pulse(pulseSingle(0, 1 * pl90C, wC))
@@ -304,7 +333,7 @@ class chloroform:
                 '''
                 Add pulse sequence for approximate h gate on carbon
                 '''
-                self.add_H_gate_second_pulse(approximate=False)
+                self.add_H_gate_second_pulse(approximate=True)
 
                 '''
                 Add pulse sequence for exact CZ gate
@@ -314,12 +343,12 @@ class chloroform:
                 '''
                 Add pulse sequence for approximate h gate on carbon
                 '''
-                self.add_H_gate_second_pulse(approximate=False)
+                self.add_H_gate_second_pulse(approximate=True)
             else:
                 '''
                 Add pulse sequence for approximate h gate on proton
                 '''
-                self.add_H_gate_first_pulse(approximate=False)
+                self.add_H_gate_first_pulse(approximate=True)
 
                 '''
                 Add pulse sequence for exact CZ gate
@@ -329,7 +358,7 @@ class chloroform:
                 '''
                 Add pulse sequence for approximate h gate on proton
                 '''
-                self.add_H_gate_first_pulse()
+                self.add_H_gate_first_pulse(approximate=True)
         else:
             if Hcontrol:
                 self.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
@@ -641,11 +670,16 @@ class chloroform:
         plt.show()
 
     def print_pulses(self):
+        output = ""
         print("initpp(dir)")
+        output = output + "initpp(dir)\n"
         for pulse in self._pulses:
             print(pulse)
-        print("--------------------------------")
-        print("parList=endpp()")
+            output = output + str(pulse) + "\n"
+        output = output + "################################" + "\n"
+        print("################################")
+        output = output + "parList=endpp()"
+        return output
 
 
 import matplotlib.pyplot as plt
