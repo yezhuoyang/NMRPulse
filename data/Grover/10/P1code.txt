@@ -35,7 +35,7 @@ delay(0.25)
 pulse(2,a90C,1,d90C)
 delay(0.25)
 pulse(2,a90C,0,d90C)
-delay(dEvolution)
+delay(dCZEvolution)
 ###########Pulse for CZ(H,C) gate end Here####
 ############Pulse for X2 gate:###########
 pulse(2,a90C,0,d180C)
@@ -69,7 +69,7 @@ delay(0.25)
 pulse(2,a90C,1,d90C)
 delay(0.25)
 pulse(2,a90C,0,d90C)
-delay(dEvolution)
+delay(dCZEvolution)
 ###########Pulse for CZ(H,C) gate end Here####
 ############Pulse for X1 gate:###########
 pulse(1,a90H,0,d180H)

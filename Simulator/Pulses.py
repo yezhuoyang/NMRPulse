@@ -236,6 +236,7 @@ class pulseTwo(pulse):
         else:
             return "pulse(1,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel1, self._channel2)
 
+
 class delayTime(pulse):
     '''
     Initialize a delay time instance
@@ -254,7 +255,10 @@ class delayTime(pulse):
 
     def __str__(self):
         if not self._isgapdelay:
-            return "delay(dEvolution)"
+            if self._delaytime == ((4 - 0.5) / Jfreq):
+                return "delay(dCZEvolution)"
+            else:
+                return "delay(dEvolution)"
         else:
             return "delay(0.25)"
         # return "delay({:.2f})".format(self._delaytime * 10 ** (3))
