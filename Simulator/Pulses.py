@@ -231,8 +231,10 @@ class pulseTwo(pulse):
             return np.kron(matrix2, matrix1)
 
     def __str__(self):
-        return "pulse(1,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel1, self._channel2)
-
+        if self._is_1_carbon:
+            return "pulse(1,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel2, self._channel1)
+        else:
+            return "pulse(1,a90HC,{},freq1H,2,a90C,{},freq13C,d90C)".format(self._channel1, self._channel2)
 
 class delayTime(pulse):
     '''
