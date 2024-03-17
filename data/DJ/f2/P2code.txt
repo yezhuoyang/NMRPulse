@@ -14,19 +14,19 @@ pulse(2,a90C,0,d180C)
 delay(0.25)
 ###########Pulse for X2 gate end Here####
 ############Pulse for H1 gate:###########
-pulse(1,a90H,1,0.25d90H)
+pulse(1,a90H,1,d45H)
 delay(0.25)
 pulse(1,a90H,0,d180H)
 delay(0.25)
-pulse(1,a90H,3,0.25d90H)
+pulse(1,a90H,3,d45H)
 delay(0.25)
 ###########Pulse for H1 gate end Here####
 ############Pulse for H2 gate:###########
-pulse(2,a90C,1,0.25d90C)
+pulse(1,a90C,1,d45C)
 delay(0.25)
 pulse(2,a90C,0,d180C)
 delay(0.25)
-pulse(2,a90C,3,0.25d90C)
+pulse(1,a90C,3,d45C)
 delay(0.25)
 ###########Pulse for H2 gate end Here####
 ############Pulse for CNOT(H,C) gate:###########
@@ -36,19 +36,19 @@ pulse(2,a90C,3,d90C)
 delay(0.25)
 ###########Pulse for CNOT(H,C) gate end Here####
 ############Pulse for H1 gate:###########
-pulse(1,a90H,1,0.25d90H)
+pulse(1,a90H,1,d45H)
 delay(0.25)
 pulse(1,a90H,0,d180H)
 delay(0.25)
-pulse(1,a90H,3,0.25d90H)
+pulse(1,a90H,3,d45H)
 delay(0.25)
 ###########Pulse for H1 gate end Here####
 ############Pulse for H2 gate:###########
-pulse(2,a90C,1,0.25d90C)
+pulse(1,a90C,1,d45C)
 delay(0.25)
 pulse(2,a90C,0,d180C)
 delay(0.25)
-pulse(2,a90C,3,0.25d90C)
+pulse(1,a90C,3,d45C)
 ###########Pulse for H2 gate end Here####
 ################################
 parList=endpp()

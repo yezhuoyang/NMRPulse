@@ -147,16 +147,20 @@ class pulseSingle(pulse):
                 return "pulse(2,a90C,{},d90C)".format(self._channel)
             elif prop == 1:
                 return "pulse(2,a90C,{},d180C)".format(self._channel)
+            elif prop == 0.25:
+                return "pulse(1,a90C,{},d45C)".format(self._channel, prop)
             else:
-                return "pulse(2,a90C,{},{}d90C)".format(self._channel, prop)
+                assert False
         else:
             prop = self._length / pl90H
             if prop == 0.5:
                 return "pulse(1,a90H,{},d90H)".format(self._channel)
             elif prop == 1:
                 return "pulse(1,a90H,{},d180H)".format(self._channel)
+            elif prop == 0.25:
+                return "pulse(1,a90H,{},d45H)".format(self._channel, prop)
             else:
-                return "pulse(1,a90H,{},{}d90H)".format(self._channel, prop)
+                assert False
 
 
 '''
