@@ -264,7 +264,10 @@ class chloroform:
     def add_p2_perm_pulse(self):
         self.add_pulse(pulseSingle(0, 0.5 * pl90H, wH))
         self.add_pulse(delayTime(0.5 / Jfreq))
-        self.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
+        self.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
+
+        #self.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
+        self.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
         self.add_pulse(delayTime(0.5 / Jfreq))
         self.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
 

@@ -830,10 +830,10 @@ if __name__ == "__main__":
     generate_grover_program("10")
     generate_grover_program("11")
 
-    #generate_DJ_program(1)
-    #generate_DJ_program(2)
-    #generate_DJ_program(3)
-    #generate_DJ_program(4)
+    generate_DJ_program(1)
+    generate_DJ_program(2)
+    generate_DJ_program(3)
+    generate_DJ_program(4)
 
     #pseudo_pure_all_cases()
 
