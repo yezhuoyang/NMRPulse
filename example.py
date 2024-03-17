@@ -825,10 +825,10 @@ if __name__ == "__main__":
     # print("SSS")
     # print(strings)
 
-    generate_grover_program("00")
-    generate_grover_program("01")
-    generate_grover_program("10")
-    generate_grover_program("11")
+    #generate_grover_program("00")
+    #generate_grover_program("01")
+    #generate_grover_program("10")
+    #generate_grover_program("11")
 
     generate_DJ_program(1)
     generate_DJ_program(2)

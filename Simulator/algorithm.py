@@ -52,17 +52,17 @@ class NMRalgorithm:
 
     def add_H_gate_first_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H1"))
-        self.NMRsample.add_H_gate_first_pulse(approximate=True)
+        self.NMRsample.add_H_gate_first_pulse(approximate=False)
         self.NMRsample.add_pulse(BarrierPulse(name="H1", endpulse=True))
 
     def add_H_gate_second_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H2"))
-        self.NMRsample.add_H_gate_second_pulse(approximate=True)
+        self.NMRsample.add_H_gate_second_pulse(approximate=False)
         self.NMRsample.add_pulse(BarrierPulse(name="H2", endpulse=True))
 
     def add_CZ_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="CZ(H,C)"))
-        self.NMRsample.add_CZ_pulse(approximate=self.approximate, Hcontrol=True)
+        self.NMRsample.add_CZ_pulse(approximate=False, Hcontrol=True)
         self.NMRsample.add_pulse(BarrierPulse(name="CZ(H,C)", endpulse=True))
 
     def add_CNOT_pulse(self):
