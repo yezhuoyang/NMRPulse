@@ -767,7 +767,7 @@ def generate_grover_program(ufstr):
     GV.construct_pulse()
     GV.insert_delay()
     pulse_program = GV.print_pulses()
-    store_string_to_file(pulse_program, rootpath + "00/P2code.txt".format(ufstr))
+    store_string_to_file(pulse_program, rootpath + "{}/P2code.txt".format(ufstr))
 
 
 if __name__ == "__main__":
