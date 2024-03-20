@@ -349,8 +349,27 @@ class chloroform:
         else:
             self.add_pulse(pulseSingle(3, 1 / 2 * pl90C, wC))
 
-    def add_CZ_pulse(self, approximate=False, Hcontrol=True):
+    def add_CZ_pulse(self, approximate=False, Hcontrol=True, exact=True):
         if not approximate:
+            if exact:
+                if Hcontrol:
+                    self.add_pulse(delayTime(0.5 / Jfreq))
+                    self.add_pulse(pulseSingle(3, 1 / 2 * pl90C, wC))
+                    self.add_pulse(pulseSingle(0, 1/2 * pl90C, wC))
+                    self.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
+                    self.add_pulse(pulseSingle(3, 1 / 2 * pl90H, wH))
+                    self.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
+                    self.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
+                    return
+                else:
+                    self.add_pulse(delayTime(0.5 / Jfreq))
+                    self.add_pulse(pulseSingle(3, 1 / 2 * pl90H, wH))
+                    self.add_pulse(pulseSingle(0, 1/2 * pl90H, wH))
+                    self.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
+                    self.add_pulse(pulseSingle(3, 1 / 2 * pl90C, wC))
+                    self.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
+                    self.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
+                    return
             if Hcontrol:
                 '''
                 Add pulse sequence for exact CZ gate

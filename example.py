@@ -144,11 +144,12 @@ def new_CNOT_pulse():
     '''
     Clear the pulses
     '''
-    NMRsample.add_CNOT_pulse(exact=True)
+    NMRsample.add_CZ_pulse(exact=True)
+    #NMRsample.add_CNOT_pulse(exact=True)
 
     NMRsample.evolve_all_pulse()
-    matrix = np.sqrt(1j)*NMRsample.get_pulse_unitary()
-    print("New CNOT")
+    matrix = NMRsample.get_pulse_unitary()
+    print("New CZ")
     print(matrix)
 
     return
@@ -849,19 +850,19 @@ if __name__ == "__main__":
     #permute_DJ([0, 1])
     #permute_DJ([1, 0])
     #permute_DJ([1, 1])
-    #permute_grover([0, 0])
-    #permute_grover([0, 1])
-    #permute_grover([1, 0])
-    #permute_grover([1, 1])
+    permute_grover([0, 0])
+    permute_grover([0, 1])
+    permute_grover([1, 0])
+    permute_grover([1, 1])
     # strings = Grover_print_pulse([1, 0, 0, 0])
 
     # print("SSS")
     # print(strings)
 
-    #generate_grover_program("00")
-    #generate_grover_program("01")
-    #generate_grover_program("10")
-    #generate_grover_program("11")
+    generate_grover_program("00")
+    generate_grover_program("01")
+    generate_grover_program("10")
+    generate_grover_program("11")
 
     #generate_DJ_program(1)
     #generate_DJ_program(2)
@@ -873,5 +874,5 @@ if __name__ == "__main__":
     # CNOT_all_cases()
     # ApproxCNOT_all_cases()
     # time.sleep(2)
-    CNOT_all_cases()
+    #CNOT_all_cases()
     #new_CNOT_pulse()
