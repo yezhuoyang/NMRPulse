@@ -26,7 +26,9 @@ pulse(2,a90C,0,d180C)
 delay(0.25)
 ###########Pulse for H2 gate end Here####
 ############Pulse for CNOT(H,C) gate:###########
-pulse(2,a90C,3,d90C)
+pulse(2,a90C,1,d90C)
+delay(0.25)
+pulse(2,a90C,0,d180C)
 delay(0.25)
 pulse(1,a90H,2,d90H)
 delay(0.25)
@@ -40,7 +42,9 @@ pulse(2,a90C,1,d90C)
 delay(0.25)
 pulse(2,a90C,0,d90C)
 delay(dCZEvolution)
-pulse(2,a90C,3,d90C)
+pulse(2,a90C,1,d90C)
+delay(0.25)
+pulse(2,a90C,0,d180C)
 delay(0.25)
 ###########Pulse for CNOT(H,C) gate end Here####
 ############Pulse for H1 gate:###########

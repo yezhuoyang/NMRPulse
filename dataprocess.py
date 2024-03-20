@@ -42,12 +42,14 @@ def average_proton_spectrum(sample0: chloroform, sample1: chloroform, sample2: c
     plt.axvline(x=avg_sample._data_proton_peaks_pos_real[1] + proton_int_range, color="green", linestyle="--")
     plt.scatter(avg_sample._data_proton_peaks_pos_real[0], avg_sample._data_proton_peaks_real[0], color="red",
                 label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(avg_sample._data_proton_peaks_pos_real[0],
-                                                                  avg_sample._data_proton_peaks_real[0],
-                                                                  avg_sample._data_proton_peaks_integral_real[0]))
+                                                                              avg_sample._data_proton_peaks_real[0],
+                                                                              avg_sample._data_proton_peaks_integral_real[
+                                                                                  0]))
     plt.scatter(avg_sample._data_proton_peaks_pos_real[1], avg_sample._data_proton_peaks_real[1], color="red",
-                label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(avg_sample._data_proton_peaks_pos_real[1],
-                                                                   avg_sample._data_proton_peaks_real[1],
-                                                                   avg_sample._data_proton_peaks_integral_real[1]))
+                label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(
+                    avg_sample._data_proton_peaks_pos_real[1],
+                    avg_sample._data_proton_peaks_real[1],
+                    avg_sample._data_proton_peaks_integral_real[1]))
 
     if store:
         plt.title(storetitle)
@@ -89,12 +91,14 @@ def average_carbon_spectrum(sample0: chloroform, sample1: chloroform, sample2: c
     plt.axvline(x=avg_sample._data_carbon_peaks_pos_real[1] + carbon_int_range, color="green", linestyle="--")
     plt.scatter(avg_sample._data_carbon_peaks_pos_real[0], avg_sample._data_carbon_peaks_real[0], color="red",
                 label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(avg_sample._data_carbon_peaks_pos_real[0],
-                                                                  avg_sample._data_carbon_peaks_real[0],
-                                                                  avg_sample._data_carbon_peaks_integral_real[0]))
+                                                                              avg_sample._data_carbon_peaks_real[0],
+                                                                              avg_sample._data_carbon_peaks_integral_real[
+                                                                                  0]))
     plt.scatter(avg_sample._data_carbon_peaks_pos_real[1], avg_sample._data_carbon_peaks_real[1], color="red",
-                label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(avg_sample._data_carbon_peaks_pos_real[1],
-                                                                   avg_sample._data_carbon_peaks_real[1],
-                                                                   avg_sample._data_carbon_peaks_integral_real[1]))
+                label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(
+                    avg_sample._data_carbon_peaks_pos_real[1],
+                    avg_sample._data_carbon_peaks_real[1],
+                    avg_sample._data_carbon_peaks_integral_real[1]))
 
     plt.plot(data_carbon_ppm0, avg_data_freq_real, label="Averaged carbon spectrum result")
     plt.xlabel("Frequency/ppm")
@@ -115,7 +119,91 @@ def process_CNOT_data():
     return
 
 
-def process_approx_CNOT_data():
+def process_approx_CNOT_data_H_10():
+    path10proton_P0 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/10/10_H_P0_apprxCNOT.csv"
+
+    sample10_P0 = chloroform()
+    sample10_P0.load_data_and_plot(path10proton_P0, isproton=True)
+
+    path10proton_P1 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/10/10_H_P1_apprxCNOT.csv"
+
+    sample10_P1 = chloroform()
+    sample10_P1.load_data_and_plot(path10proton_P1, isproton=True)
+
+    path10proton_P2 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/10/10_H_P2_apprxCNOT.csv"
+
+    sample10_P2 = chloroform()
+    sample10_P2.load_data_and_plot(path10proton_P2, isproton=True)
+
+    average_proton_spectrum(sample10_P0, sample10_P1, sample10_P2, store=True,
+                            storePath="C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/10/10_H_avg.png",
+                            storetitle="Averaged result in H channel for DJ(ApproxCNOT 10 State).")
+    return
+
+
+def process_approx_CNOT_data_C_10():
+    path10carbon_P0 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/10/10_C_P0_apprxCNOT.csv"
+
+    sample10_P0 = chloroform()
+    sample10_P0.load_data_and_plot(path10carbon_P0, minppm=60, maxppm=85, isproton=False)
+
+    path10carbon_P1 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/10/10_C_P1_apprxCNOT.csv"
+
+    sample10_P1 = chloroform()
+    sample10_P1.load_data_and_plot(path10carbon_P1, minppm=60, maxppm=85, isproton=False)
+
+    path10carbon_P2 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/10/10_C_P2_apprxCNOT.csv"
+
+    sample10_P2 = chloroform()
+    sample10_P2.load_data_and_plot(path10carbon_P2, minppm=60, maxppm=85, isproton=False)
+
+    average_carbon_spectrum(sample10_P0, sample10_P1, sample10_P2, store=True,
+                            storePath="C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/10/10_C_avg.png",
+                            storetitle="Averaged result in C channel for DJ(ApproxCNOT 10 State).")
+    return
+
+
+def process_approx_CNOT_data_H_11():
+    path11proton_P0 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/11/11_H_P0_apprxCNOT.csv"
+
+    sample11_P0 = chloroform()
+    sample11_P0.load_data_and_plot(path11proton_P0, isproton=True)
+
+    path11proton_P1 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/11/11_H_P1_apprxCNOT.csv"
+
+    sample11_P1 = chloroform()
+    sample11_P1.load_data_and_plot(path11proton_P1, isproton=True)
+
+    path11proton_P2 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/11/11_H_P2_apprxCNOT.csv"
+
+    sample11_P2 = chloroform()
+    sample11_P2.load_data_and_plot(path11proton_P2, isproton=True)
+
+    average_proton_spectrum(sample11_P0, sample11_P1, sample11_P2, store=True,
+                            storePath="C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/11/11_H_avg.png",
+                            storetitle="Averaged result in H channel for DJ(ApproxCNOT 11 State).")
+    return
+
+
+def process_approx_CNOT_data_C_11():
+    path11carbon_P0 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/11/11_C_P1_apprxCNOT.csv"
+
+    sample11_P0 = chloroform()
+    sample11_P0.load_data_and_plot(path11carbon_P0, minppm=60, maxppm=85, isproton=False)
+
+    path11carbon_P1 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/11/11_C_P1_apprxCNOT.csv"
+
+    sample11_P1 = chloroform()
+    sample11_P1.load_data_and_plot(path11carbon_P1, minppm=60, maxppm=85, isproton=False)
+
+    path11carbon_P2 = "C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/11/11_C_P2_apprxCNOT.csv"
+
+    sample11_P2 = chloroform()
+    sample11_P2.load_data_and_plot(path11carbon_P2, minppm=60, maxppm=85, isproton=False)
+
+    average_carbon_spectrum(sample11_P0, sample11_P1, sample11_P2, store=True,
+                            storePath="C:/Users/73747/PycharmProjects/NMRPulse/data/ApproxCNOT/11/11_C_avg.png",
+                            storetitle="Averaged result in C channel for DJ(ApproxCNOT 11 State).")
     return
 
 
@@ -388,7 +476,19 @@ def process_DJ_11_data():
     return
 
 
-def process_Grover_data():
+def process_Grover_00_data():
+    return
+
+
+def process_Grover_00_data():
+    return
+
+
+def process_Grover_00_data():
+    return
+
+
+def process_Grover_00_data():
     return
 
 
@@ -396,16 +496,21 @@ from Simulator.algorithm import *
 
 if __name__ == "__main__":
     # process_pseudo_state00_data()
-    # process_DJ_00_data()
-    # process_DJ_01_data()
-    # process_DJ_10_data()
-    # process_DJ_11_data()
-    # process_pseudo_state00_proton_data()
+    process_DJ_00_data()
+    process_DJ_01_data()
+    process_DJ_10_data()
+    process_DJ_11_data()
+    # rocess_pseudo_state00_proton_data()
     # process_pseudo_state01_proton_data()
     # process_pseudo_state10_proton_data()
     # process_pseudo_state11_proton_data()
 
-    process_pseudo_state00_carbon_data()
-    process_pseudo_state01_carbon_data()
-    process_pseudo_state10_carbon_data()
-    process_pseudo_state11_carbon_data()
+    # process_pseudo_state00_carbon_data()
+    # process_pseudo_state01_carbon_data()
+    # process_pseudo_state10_carbon_data()
+    # process_pseudo_state11_carbon_data()
+
+    #process_approx_CNOT_data_C_10()
+    #process_approx_CNOT_data_C_11()
+    #process_approx_CNOT_data_H_10()
+    #process_approx_CNOT_data_H_11()

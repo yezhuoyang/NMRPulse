@@ -5,7 +5,7 @@ import pandas as pd
 from Simulator.util import *
 from scipy.integrate import simps
 
-proton_int_range = 3
+proton_int_range = 0.8
 carbon_int_range = 3
 
 
@@ -370,7 +370,7 @@ class chloroform:
                 '''
                 Add pulse sequence for approximate h gate on carbon
                 '''
-                self.add_H_gate_second_pulse(approximate=True)
+                self.add_H_gate_second_pulse(approximate=False)
 
                 '''
                 Add pulse sequence for exact CZ gate
@@ -380,12 +380,12 @@ class chloroform:
                 '''
                 Add pulse sequence for approximate h gate on carbon
                 '''
-                self.add_H_gate_second_pulse(approximate=True)
+                self.add_H_gate_second_pulse(approximate=False)
             else:
                 '''
                 Add pulse sequence for approximate h gate on proton
                 '''
-                self.add_H_gate_first_pulse(approximate=True)
+                self.add_H_gate_first_pulse(approximate=False)
 
                 '''
                 Add pulse sequence for exact CZ gate
@@ -395,7 +395,7 @@ class chloroform:
                 '''
                 Add pulse sequence for approximate h gate on proton
                 '''
-                self.add_H_gate_first_pulse(approximate=True)
+                self.add_H_gate_first_pulse(approximate=False)
         else:
             if Hcontrol:
                 self.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
@@ -568,6 +568,12 @@ class chloroform:
         else:
             if isreal:
                 positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_real)
+
+                print(max(self._data_carbon_freq_domain_real))
+
+                print("Positions")
+                print(positions)
+
                 self._data_carbon_peaks_real = values
                 self._data_carbon_peaks_pos_real = positions
 

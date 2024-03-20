@@ -509,7 +509,7 @@ uf: A list of the state input
 '''
 
 
-def pseudo_pure_state(uf, add_CNOT=False, add_approx_CNOT=False, generateprogram=False):
+def pseudo_pure_state(uf, add_CNOT=True, add_approx_CNOT=False, generateprogram=False):
     assert not (add_CNOT and add_approx_CNOT)
 
     ufstring = str(uf[0]) + str(uf[1])
@@ -823,32 +823,32 @@ if __name__ == "__main__":
     # pseudo_pure_state([1,0], add_CNOT=False, add_approx_CNOT=True)
     # pseudo_pure_state([1,1], add_CNOT=False, add_approx_CNOT=True)
 
-    # permute_DJ([0, 0])
-    # permute_DJ([0, 1])
-    # permute_DJ([1, 0])
-    # permute_DJ([1, 1])
+    #permute_DJ([0, 0])
+    #permute_DJ([0, 1])
+    #permute_DJ([1, 0])
+    permute_DJ([1, 1])
     #permute_grover([0, 0])
     #permute_grover([0, 1])
-    permute_grover([1, 0])
+    #permute_grover([1, 0])
     #permute_grover([1, 1])
     # strings = Grover_print_pulse([1, 0, 0, 0])
 
     # print("SSS")
     # print(strings)
 
-    # generate_grover_program("00")
-    # generate_grover_program("01")
-    # generate_grover_program("10")
-    # generate_grover_program("11")
+    #generate_grover_program("00")
+    #generate_grover_program("01")
+    #generate_grover_program("10")
+    #generate_grover_program("11")
 
-    # generate_DJ_program(1)
-    # generate_DJ_program(2)
-    # generate_DJ_program(3)
-    # generate_DJ_program(4)
+    #generate_DJ_program(1)
+    #generate_DJ_program(2)
+    #generate_DJ_program(3)
+    #generate_DJ_program(4)
 
-    # pseudo_pure_all_cases()
+    #pseudo_pure_all_cases()
 
     # CNOT_all_cases()
     # ApproxCNOT_all_cases()
     # time.sleep(2)
-    # CNOT_all_cases()
+    #CNOT_all_cases()
