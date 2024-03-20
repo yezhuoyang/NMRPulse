@@ -14,19 +14,15 @@ pulse(2,a90C,0,d180C)
 delay(0.25)
 ###########Pulse for X2 gate end Here####
 ############Pulse for H1 gate:###########
-pulse(1,a90H,1,d45H)
+pulse(1,a90H,1,d90H)
 delay(0.25)
 pulse(1,a90H,0,d180H)
 delay(0.25)
-pulse(1,a90H,3,d45H)
-delay(0.25)
 ###########Pulse for H1 gate end Here####
 ############Pulse for H2 gate:###########
-pulse(1,a90C,1,d45C)
+pulse(2,a90C,1,d90C)
 delay(0.25)
 pulse(2,a90C,0,d180C)
-delay(0.25)
-pulse(1,a90C,3,d45C)
 delay(0.25)
 ###########Pulse for H2 gate end Here####
 ############Pulse for X1 gate:###########
@@ -52,19 +48,15 @@ pulse(1,a90H,0,d180H)
 delay(0.25)
 ###########Pulse for X1 gate end Here####
 ############Pulse for H1 gate:###########
-pulse(1,a90H,1,d45H)
+pulse(1,a90H,1,d90H)
 delay(0.25)
 pulse(1,a90H,0,d180H)
 delay(0.25)
-pulse(1,a90H,3,d45H)
-delay(0.25)
 ###########Pulse for H1 gate end Here####
 ############Pulse for H2 gate:###########
-pulse(1,a90C,1,d45C)
+pulse(2,a90C,1,d90C)
 delay(0.25)
 pulse(2,a90C,0,d180C)
-delay(0.25)
-pulse(1,a90C,3,d45C)
 delay(0.25)
 ###########Pulse for H2 gate end Here####
 ############Pulse for X1 gate:###########
@@ -98,19 +90,15 @@ pulse(2,a90C,0,d180C)
 delay(0.25)
 ###########Pulse for X2 gate end Here####
 ############Pulse for H1 gate:###########
-pulse(1,a90H,1,d45H)
+pulse(1,a90H,1,d90H)
 delay(0.25)
 pulse(1,a90H,0,d180H)
 delay(0.25)
-pulse(1,a90H,3,d45H)
-delay(0.25)
 ###########Pulse for H1 gate end Here####
 ############Pulse for H2 gate:###########
-pulse(1,a90C,1,d45C)
+pulse(2,a90C,1,d90C)
 delay(0.25)
 pulse(2,a90C,0,d180C)
-delay(0.25)
-pulse(1,a90C,3,d45C)
 delay(0.25)
 ###########Pulse for H2 gate end Here####
 ############Pulse for X1 gate:###########

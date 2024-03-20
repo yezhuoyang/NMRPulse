@@ -277,19 +277,17 @@ class chloroform:
     def add_X_gate_second_pulse(self):
         self.add_pulse(pulseSingle(0, pl90C, wC))
 
-    def add_H_gate_first_pulse(self, approximate=True):
+    def add_H_gate_first_pulse(self, approximate=False):
         if not approximate:
-            self.add_pulse(pulseSingle(1, 1 / 4 * pl90H, wH))
+            self.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
             self.add_pulse(pulseSingle(0, 1 * pl90H, wH))
-            self.add_pulse(pulseSingle(3, 1 / 4 * pl90H, wH))
         else:
             self.add_pulse(pulseSingle(3, 1 / 2 * pl90H, wH))
 
-    def add_H_gate_second_pulse(self, approximate=True):
+    def add_H_gate_second_pulse(self, approximate=False):
         if not approximate:
-            self.add_pulse(pulseSingle(1, 1 / 4 * pl90C, wC))
+            self.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
             self.add_pulse(pulseSingle(0, 1 * pl90C, wC))
-            self.add_pulse(pulseSingle(3, 1 / 4 * pl90C, wC))
         else:
             self.add_pulse(pulseSingle(3, 1 / 2 * pl90C, wC))
 
