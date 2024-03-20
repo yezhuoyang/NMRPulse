@@ -3,6 +3,38 @@ from Simulator.Pulses import pulse, pulseSingle, pulseTwo, delayTime, BarrierPul
 from Simulator.params import *
 import pandas as pd
 from Simulator.util import *
+from scipy.integrate import simps
+
+proton_int_range = 3
+carbon_int_range = 3
+
+
+def integrate_spectrum(X, Y, xmin, xmax):
+    """
+    Integrates the spectrum data between xmin and xmax.
+
+    Parameters:
+    - X: List of positions.
+    - Y: List of spectrum data corresponding to the positions.
+    - xmin: Minimum value of X for integration.
+    - xmax: Maximum value of X for integration.
+
+    Returns:
+    - The numerical integral of the spectrum data between xmin and xmax.
+    """
+    # Convert lists to numpy arrays for efficient operations
+    X_array = np.array(X)
+    Y_array = np.array(Y)
+
+    # Filter the arrays to include only the range between xmin and xmax
+    mask = (X_array >= xmin) & (X_array <= xmax)
+    X_filtered = X_array[mask]
+    Y_filtered = Y_array[mask]
+
+    # Use Simpson's rule for numerical integration over the filtered range
+    integral = simps(Y_filtered, X_filtered)
+
+    return integral
 
 
 def thermal_equilibrium_density():
@@ -83,9 +115,11 @@ class chloroform:
         self._data_proton_ppm = []
         self._data_proton_freq_domain_real = []
         self._data_proton_peaks_real = []
+        self._data_proton_peaks_integral_real = []
         self._data_proton_peaks_pos_real = []
         self._data_proton_freq_domain_imag = []
         self._data_proton_peaks_imag = []
+        self._data_proton_peaks_integral_imag = []
         self._data_proton_peaks_pos_imag = []
 
         self._carbon_time_domain = []
@@ -99,9 +133,11 @@ class chloroform:
         self._data_carbon_ppm = []
         self._data_carbon_freq_domain_real = []
         self._data_carbon_peaks_real = []
+        self._data_carbon_peaks_integral_real = []
         self._data_carbon_peaks_pos_real = []
         self._data_carbon_freq_domain_imag = []
         self._data_carbon_peaks_imag = []
+        self._data_carbon_peaks_integral_imag = []
         self._data_carbon_peaks_pos_imag = []
 
         self._density = np.zeros((4, 4), dtype=complex)
@@ -266,7 +302,7 @@ class chloroform:
         self.add_pulse(delayTime(0.5 / Jfreq))
         self.add_pulse(pulseSingle(3, 0.5 * pl90H, wH))
 
-        #self.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
+        # self.add_pulse(pulseTwo(3, 0.5 * pl90H, wH, 0, 0.5 * pl90C, wC))
         self.add_pulse(pulseSingle(0, 0.5 * pl90C, wC))
         self.add_pulse(delayTime(0.5 / Jfreq))
         self.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
@@ -504,19 +540,59 @@ class chloroform:
                 positions, values = find_two_largest_peaks(self._data_proton_ppm, self._data_proton_freq_domain_real)
                 self._data_proton_peaks_real = values
                 self._data_proton_peaks_pos_real = positions
+                '''
+                Append two integrals for two peaks.
+                '''
+                self._data_proton_peaks_integral_real.append(
+                    integrate_spectrum(self._data_proton_ppm, self._data_proton_freq_domain_real,
+                                       positions[0] - proton_int_range, positions[0] + proton_int_range))
+
+                self._data_proton_peaks_integral_real.append(
+                    integrate_spectrum(self._data_proton_ppm, self._data_proton_freq_domain_real,
+                                       positions[1] - proton_int_range, positions[1] + proton_int_range))
+
             else:
                 positions, values = find_two_largest_peaks(self._data_proton_ppm, self._data_proton_freq_domain_imag)
                 self._data_proton_peaks_imag = values
                 self._data_proton_peaks_pos_imag = positions
+                '''
+                Append two integrals for two peaks.
+                '''
+                self._data_proton_peaks_integral_imag.append(
+                    integrate_spectrum(self._data_proton_ppm, self._data_proton_freq_domain_imag,
+                                       positions[0] - proton_int_range, positions[0] + proton_int_range))
+
+                self._data_proton_peaks_integral_imag.append(
+                    integrate_spectrum(self._data_proton_ppm, self._data_proton_freq_domain_imag,
+                                       positions[1] - proton_int_range, positions[1] + proton_int_range))
         else:
             if isreal:
                 positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_real)
                 self._data_carbon_peaks_real = values
                 self._data_carbon_peaks_pos_real = positions
+
+                '''
+                Append two integrals for two peaks.
+                '''
+                self._data_carbon_peaks_integral_real.append(
+                    integrate_spectrum(self._data_carbon_ppm, self._data_carbon_freq_domain_real,
+                                       positions[0] - carbon_int_range, positions[0] + carbon_int_range))
+
+                self._data_carbon_peaks_integral_real.append(
+                    integrate_spectrum(self._data_carbon_ppm, self._data_carbon_freq_domain_real,
+                                       positions[1] - carbon_int_range, positions[1] + carbon_int_range))
             else:
                 positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_imag)
                 self._data_carbon_peaks_imag = values
                 self._data_carbon_peaks_pos_imag = positions
+
+                self._data_carbon_peaks_integral_imag.append(
+                    integrate_spectrum(self._data_carbon_ppm, self._data_carbon_freq_domain_imag,
+                                       positions[0] - carbon_int_range, positions[0] + carbon_int_range))
+
+                self._data_carbon_peaks_integral_imag.append(
+                    integrate_spectrum(self._data_carbon_ppm, self._data_carbon_freq_domain_imag,
+                                       positions[1] - carbon_int_range, positions[1] + carbon_int_range))
 
     '''
     Load the spectrum data from a give path
@@ -551,19 +627,34 @@ class chloroform:
             plt.plot(self._data_carbon_ppm, self._data_carbon_freq_domain_real, label='Real Part', color='blue')
 
         if isproton:
+
+            plt.axvline(x=self._data_proton_peaks_pos_real[0] - proton_int_range, color="red", linestyle="--")
+            plt.axvline(x=self._data_proton_peaks_pos_real[0] + proton_int_range, color="red", linestyle="--")
+            plt.axvline(x=self._data_proton_peaks_pos_real[1] - proton_int_range, color="green", linestyle="--")
+            plt.axvline(x=self._data_proton_peaks_pos_real[1] + proton_int_range, color="green", linestyle="--")
             plt.scatter(self._data_proton_peaks_pos_real[0], self._data_proton_peaks_real[0], color="red",
-                        label="First peak f={}, p={}".format(self._data_proton_peaks_pos_real[0],
-                                                             self._data_proton_peaks_real[0]))
+                        label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(self._data_proton_peaks_pos_real[0],
+                                                                          self._data_proton_peaks_real[0],
+                                                                          self._data_proton_peaks_integral_real[0]))
             plt.scatter(self._data_proton_peaks_pos_real[1], self._data_proton_peaks_real[1], color="red",
-                        label="First peak f={}, p={}".format(self._data_proton_peaks_pos_real[1],
-                                                             self._data_proton_peaks_real[1]))
+                        label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(self._data_proton_peaks_pos_real[1],
+                                                                           self._data_proton_peaks_real[1],
+                                                                           self._data_proton_peaks_integral_real[1]))
+
         else:
+
+            plt.axvline(x=self._data_carbon_peaks_pos_real[0] - carbon_int_range, color="red", linestyle="--")
+            plt.axvline(x=self._data_carbon_peaks_pos_real[0] + carbon_int_range, color="red", linestyle="--")
+            plt.axvline(x=self._data_carbon_peaks_pos_real[1] - carbon_int_range, color="green", linestyle="--")
+            plt.axvline(x=self._data_carbon_peaks_pos_real[1] + carbon_int_range, color="green", linestyle="--")
             plt.scatter(self._data_carbon_peaks_pos_real[0], self._data_carbon_peaks_real[0], color="red",
-                        label="First peak f={}, p={}".format(self._data_carbon_peaks_pos_real[0],
-                                                             self._data_carbon_peaks_real[0]))
+                        label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(self._data_carbon_peaks_pos_real[0],
+                                                                          self._data_carbon_peaks_real[0],
+                                                                          self._data_carbon_peaks_integral_real[0]))
             plt.scatter(self._data_carbon_peaks_pos_real[1], self._data_carbon_peaks_real[1], color="red",
-                        label="First peak f={}, p={}".format(self._data_carbon_peaks_pos_real[1],
-                                                             self._data_carbon_peaks_real[1]))
+                        label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(self._data_carbon_peaks_pos_real[1],
+                                                                           self._data_carbon_peaks_real[1],
+                                                                           self._data_carbon_peaks_integral_real[1]))
         # Optionally, plot the imaginary part of the spectrum on the same plot
         # Uncomment the next line if you want to include the imaginary part in the plot
         # plt.plot(data['Frequency (ppm)'], data['Imaginary Part'], label='Imaginary Part', color='red')
@@ -681,6 +772,10 @@ class chloroform:
         print("################################")
         output = output + "parList=endpp()"
         return output
+
+    @property
+    def data_proton_peaks_pos_real(self):
+        return self._data_proton_peaks_pos_real
 
 
 import matplotlib.pyplot as plt

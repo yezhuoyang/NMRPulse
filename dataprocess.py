@@ -28,8 +28,27 @@ def average_proton_spectrum(sample0: chloroform, sample1: chloroform, sample2: c
                           data_proton_freq_domain_real1 +
                           data_proton_freq_domain_real2) / 3
 
+    avg_sample = chloroform()
+    avg_sample._data_proton_ppm = data_proton_ppm0
+    avg_sample._data_proton_freq_domain_real = avg_data_freq_real
+    avg_sample.determine_peaks(isproton=True, isreal=True)
+
     plt.plot(data_proton_ppm0, avg_data_freq_real, label="Averaged proton spectrum result")
     plt.xlabel("Frequency/ppm")
+
+    plt.axvline(x=avg_sample._data_proton_peaks_pos_real[0] - proton_int_range, color="red", linestyle="--")
+    plt.axvline(x=avg_sample._data_proton_peaks_pos_real[0] + proton_int_range, color="red", linestyle="--")
+    plt.axvline(x=avg_sample._data_proton_peaks_pos_real[1] - proton_int_range, color="green", linestyle="--")
+    plt.axvline(x=avg_sample._data_proton_peaks_pos_real[1] + proton_int_range, color="green", linestyle="--")
+    plt.scatter(avg_sample._data_proton_peaks_pos_real[0], avg_sample._data_proton_peaks_real[0], color="red",
+                label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(avg_sample._data_proton_peaks_pos_real[0],
+                                                                  avg_sample._data_proton_peaks_real[0],
+                                                                  avg_sample._data_proton_peaks_integral_real[0]))
+    plt.scatter(avg_sample._data_proton_peaks_pos_real[1], avg_sample._data_proton_peaks_real[1], color="red",
+                label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(avg_sample._data_proton_peaks_pos_real[1],
+                                                                   avg_sample._data_proton_peaks_real[1],
+                                                                   avg_sample._data_proton_peaks_integral_real[1]))
+
     if store:
         plt.title(storetitle)
         plt.legend()
@@ -55,6 +74,27 @@ def average_carbon_spectrum(sample0: chloroform, sample1: chloroform, sample2: c
     avg_data_freq_real = (data_carbon_freq_domain_real0 +
                           data_carbon_freq_domain_real1 +
                           data_carbon_freq_domain_real2) / 3
+
+    avg_sample = chloroform()
+    avg_sample._data_carbon_ppm = data_carbon_ppm0
+    avg_sample._data_carbon_freq_domain_real = avg_data_freq_real
+    avg_sample.determine_peaks(isproton=False, isreal=True)
+
+    plt.plot(data_carbon_ppm0, avg_data_freq_real, label="Averaged carbon spectrum result")
+    plt.xlabel("Frequency/ppm")
+
+    plt.axvline(x=avg_sample._data_carbon_peaks_pos_real[0] - carbon_int_range, color="red", linestyle="--")
+    plt.axvline(x=avg_sample._data_carbon_peaks_pos_real[0] + carbon_int_range, color="red", linestyle="--")
+    plt.axvline(x=avg_sample._data_carbon_peaks_pos_real[1] - carbon_int_range, color="green", linestyle="--")
+    plt.axvline(x=avg_sample._data_carbon_peaks_pos_real[1] + carbon_int_range, color="green", linestyle="--")
+    plt.scatter(avg_sample._data_carbon_peaks_pos_real[0], avg_sample._data_carbon_peaks_real[0], color="red",
+                label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(avg_sample._data_carbon_peaks_pos_real[0],
+                                                                  avg_sample._data_carbon_peaks_real[0],
+                                                                  avg_sample._data_carbon_peaks_integral_real[0]))
+    plt.scatter(avg_sample._data_carbon_peaks_pos_real[1], avg_sample._data_carbon_peaks_real[1], color="red",
+                label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(avg_sample._data_carbon_peaks_pos_real[1],
+                                                                   avg_sample._data_carbon_peaks_real[1],
+                                                                   avg_sample._data_carbon_peaks_integral_real[1]))
 
     plt.plot(data_carbon_ppm0, avg_data_freq_real, label="Averaged carbon spectrum result")
     plt.xlabel("Frequency/ppm")
