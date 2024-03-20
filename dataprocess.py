@@ -724,11 +724,11 @@ def process_Grover_11_data():
 from Simulator.algorithm import *
 
 if __name__ == "__main__":
-    # process_pseudo_state00_data()
-    process_DJ_00_data()
-    process_DJ_01_data()
-    process_DJ_10_data()
-    process_DJ_11_data()
+    #process_pseudo_state00_data()
+    #process_DJ_00_data()
+    #process_DJ_01_data()
+    #process_DJ_10_data()
+    #process_DJ_11_data()
     #process_pseudo_state00_proton_data()
     #process_pseudo_state01_proton_data()
     #process_pseudo_state10_proton_data()
@@ -740,10 +740,10 @@ if __name__ == "__main__":
     # process_pseudo_state11_carbon_data()
 
 
-    process_exact_CNOT_data_H_00()
-    process_exact_CNOT_data_H_01()
-    process_exact_CNOT_data_H_10()
-    process_exact_CNOT_data_H_11()
+    #process_exact_CNOT_data_H_00()
+    #process_exact_CNOT_data_H_01()
+    #process_exact_CNOT_data_H_10()
+    #process_exact_CNOT_data_H_11()
 
     #process_approx_CNOT_data_H_00()
     #process_approx_CNOT_data_H_01()
@@ -756,7 +756,7 @@ if __name__ == "__main__":
     #process_approx_CNOT_data_H_10()
     #process_approx_CNOT_data_H_11()
 
-    process_Grover_00_data()
-    process_Grover_01_data()
-    process_Grover_10_data()
-    process_Grover_11_data()
+    #process_Grover_00_data()
+    #process_Grover_01_data()
+    #process_Grover_10_data()
+    #process_Grover_11_data()

@@ -207,10 +207,10 @@ class Djalgorithm(NMRalgorithm):
         for i in range(0, 1 << (2 - 1)):
             if self.UF[i] == 1:
                 if i == 0:
-                    self.add_H_gate_first_pulse()
+                    self.add_X_gate_first_pulse()
                 self.add_CNOT_pulse()
                 if i == 0:
-                    self.add_H_gate_first_pulse()
+                    self.add_X_gate_first_pulse()
         return
 
     def plot_measure_all(self):
