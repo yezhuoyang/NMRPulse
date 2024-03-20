@@ -364,7 +364,7 @@ class chloroform:
         else:
             pass
 
-    def add_CNOT_pulse(self, approximate=False, Hcontrol=True):
+    def add_CNOT_pulse(self, approximate=True, Hcontrol=True):
         if not approximate:
             if Hcontrol:
                 '''
