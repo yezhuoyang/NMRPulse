@@ -725,7 +725,7 @@ from Simulator.algorithm import *
 
 if __name__ == "__main__":
     #process_pseudo_state00_data()
-    #process_DJ_00_data()
+    process_DJ_00_data()
     #process_DJ_01_data()
     #process_DJ_10_data()
     #process_DJ_11_data()
