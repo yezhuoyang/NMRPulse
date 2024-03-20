@@ -307,6 +307,28 @@ class chloroform:
         self.add_pulse(delayTime(0.5 / Jfreq))
         self.add_pulse(pulseSingle(3, 0.5 * pl90C, wC))
 
+    def add_Iz_first_pulse(self, theta):
+        '''
+        Evolve the density matrix with all pulses
+        '''
+        self.add_pulse(pulseSingle(2, 1 / 2 * pl90H, wH))
+        if theta > 0:
+            self.add_pulse(pulseSingle(1, theta * pl90H, wH))
+        else:
+            self.add_pulse(pulseSingle(3, -theta * pl90H, wH))
+        self.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
+
+    def add_Iz_second_pulse(self, theta):
+        '''
+        Evolve the density matrix with all pulses
+        '''
+        self.add_pulse(pulseSingle(2, 1 / 2 * pl90C, wC))
+        if theta > 0:
+            self.add_pulse(pulseSingle(1, theta * pl90C, wC))
+        else:
+            self.add_pulse(pulseSingle(3, -theta * pl90C, wC))
+        self.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
+
     def add_X_gate_first_pulse(self):
         self.add_pulse(pulseSingle(0, pl90H, wH))
 
@@ -364,8 +386,15 @@ class chloroform:
         else:
             pass
 
-    def add_CNOT_pulse(self, approximate=False, Hcontrol=True):
+    def add_CNOT_pulse(self, approximate=False, Hcontrol=True, exact=True):
         if not approximate:
+            if exact:
+                self.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
+                self.add_pulse(delayTime(((0.5) / Jfreq)))
+                self.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
+                self.add_Iz_second_pulse(-0.5)
+                self.add_Iz_first_pulse(0.5)
+                return
             if Hcontrol:
                 '''
                 Add pulse sequence for approximate h gate on carbon
@@ -639,13 +668,15 @@ class chloroform:
             plt.axvline(x=self._data_proton_peaks_pos_real[1] - proton_int_range, color="green", linestyle="--")
             plt.axvline(x=self._data_proton_peaks_pos_real[1] + proton_int_range, color="green", linestyle="--")
             plt.scatter(self._data_proton_peaks_pos_real[0], self._data_proton_peaks_real[0], color="red",
-                        label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(self._data_proton_peaks_pos_real[0],
-                                                                          self._data_proton_peaks_real[0],
-                                                                          self._data_proton_peaks_integral_real[0]))
+                        label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(
+                            self._data_proton_peaks_pos_real[0],
+                            self._data_proton_peaks_real[0],
+                            self._data_proton_peaks_integral_real[0]))
             plt.scatter(self._data_proton_peaks_pos_real[1], self._data_proton_peaks_real[1], color="red",
-                        label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(self._data_proton_peaks_pos_real[1],
-                                                                           self._data_proton_peaks_real[1],
-                                                                           self._data_proton_peaks_integral_real[1]))
+                        label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(
+                            self._data_proton_peaks_pos_real[1],
+                            self._data_proton_peaks_real[1],
+                            self._data_proton_peaks_integral_real[1]))
 
         else:
 
@@ -654,13 +685,15 @@ class chloroform:
             plt.axvline(x=self._data_carbon_peaks_pos_real[1] - carbon_int_range, color="green", linestyle="--")
             plt.axvline(x=self._data_carbon_peaks_pos_real[1] + carbon_int_range, color="green", linestyle="--")
             plt.scatter(self._data_carbon_peaks_pos_real[0], self._data_carbon_peaks_real[0], color="red",
-                        label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(self._data_carbon_peaks_pos_real[0],
-                                                                          self._data_carbon_peaks_real[0],
-                                                                          self._data_carbon_peaks_integral_real[0]))
+                        label="First peak f={:.3f}, p={:.3f}, integral={:.3f}".format(
+                            self._data_carbon_peaks_pos_real[0],
+                            self._data_carbon_peaks_real[0],
+                            self._data_carbon_peaks_integral_real[0]))
             plt.scatter(self._data_carbon_peaks_pos_real[1], self._data_carbon_peaks_real[1], color="red",
-                        label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(self._data_carbon_peaks_pos_real[1],
-                                                                           self._data_carbon_peaks_real[1],
-                                                                           self._data_carbon_peaks_integral_real[1]))
+                        label="Second peak f={:.3f}, p={:.3f}, integral={:.3f}".format(
+                            self._data_carbon_peaks_pos_real[1],
+                            self._data_carbon_peaks_real[1],
+                            self._data_carbon_peaks_integral_real[1]))
         # Optionally, plot the imaginary part of the spectrum on the same plot
         # Uncomment the next line if you want to include the imaginary part in the plot
         # plt.plot(data['Frequency (ppm)'], data['Imaginary Part'], label='Imaginary Part', color='red')

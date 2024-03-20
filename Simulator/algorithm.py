@@ -50,6 +50,7 @@ class NMRalgorithm:
         self.NMRsample.add_X_gate_second_pulse()
         self.NMRsample.add_pulse(BarrierPulse(name="X2", endpulse=True))
 
+
     def add_H_gate_first_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="H1"))
         self.NMRsample.add_H_gate_first_pulse(approximate=False)

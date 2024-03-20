@@ -77,6 +77,10 @@ def pulse_length_calib_carbon():
 Rz(theta)=Rx(-\pi/2)Ry(theta)Rx(\pi/2)
 '''
 
+'''
+Rz(-theta)=Rx(-\pi/2)Ry(-theta)Rx(\pi/2)
+'''
+
 
 def IZ_pulse(theta):
     NMRsample = chloroform()
@@ -129,6 +133,24 @@ def SZ_pulse(theta):
     true_matrix = np.kron(I_matrix(), Rz_theta)
     print("True value")
     print(true_matrix)
+    return
+
+
+def new_CNOT_pulse():
+    NMRsample = chloroform()
+    NMRsample.set_thermal_equilibrium()
+    # Rz_theta = Rz_matrix(theta * np.pi)
+
+    '''
+    Clear the pulses
+    '''
+    NMRsample.add_CNOT_pulse(exact=True)
+
+    NMRsample.evolve_all_pulse()
+    matrix = np.sqrt(1j)*NMRsample.get_pulse_unitary()
+    print("New CNOT")
+    print(matrix)
+
     return
 
 
@@ -836,19 +858,20 @@ if __name__ == "__main__":
     # print("SSS")
     # print(strings)
 
-    #generate_grover_program("00")
-    #generate_grover_program("01")
-    #generate_grover_program("10")
-    #generate_grover_program("11")
+    generate_grover_program("00")
+    generate_grover_program("01")
+    generate_grover_program("10")
+    generate_grover_program("11")
 
-    #generate_DJ_program(1)
-    #generate_DJ_program(2)
-    #generate_DJ_program(3)
-    #generate_DJ_program(4)
+    generate_DJ_program(1)
+    generate_DJ_program(2)
+    generate_DJ_program(3)
+    generate_DJ_program(4)
 
-    #pseudo_pure_all_cases()
+    pseudo_pure_all_cases()
 
     # CNOT_all_cases()
     # ApproxCNOT_all_cases()
     # time.sleep(2)
     #CNOT_all_cases()
+    new_CNOT_pulse()
