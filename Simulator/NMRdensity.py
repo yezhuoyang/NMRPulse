@@ -6,7 +6,11 @@ from Simulator.util import *
 from scipy.integrate import simps
 
 proton_int_range = 0.8
+proton_center_left = 4.992
+proton_center_right = 8.434
 carbon_int_range = 3
+carbon_center_left = 66.444
+carbon_center_right = 80.180
 
 
 def integrate_spectrum(X, Y, xmin, xmax):
@@ -355,7 +359,7 @@ class chloroform:
                 if Hcontrol:
                     self.add_pulse(delayTime(0.5 / Jfreq))
                     self.add_pulse(pulseSingle(3, 1 / 2 * pl90C, wC))
-                    self.add_pulse(pulseSingle(0, 1/2 * pl90C, wC))
+                    self.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
                     self.add_pulse(pulseSingle(1, 1 / 2 * pl90C, wC))
                     self.add_pulse(pulseSingle(3, 1 / 2 * pl90H, wH))
                     self.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
@@ -364,7 +368,7 @@ class chloroform:
                 else:
                     self.add_pulse(delayTime(0.5 / Jfreq))
                     self.add_pulse(pulseSingle(3, 1 / 2 * pl90H, wH))
-                    self.add_pulse(pulseSingle(0, 1/2 * pl90H, wH))
+                    self.add_pulse(pulseSingle(0, 1 / 2 * pl90H, wH))
                     self.add_pulse(pulseSingle(1, 1 / 2 * pl90H, wH))
                     self.add_pulse(pulseSingle(3, 1 / 2 * pl90C, wC))
                     self.add_pulse(pulseSingle(0, 1 / 2 * pl90C, wC))
@@ -615,7 +619,7 @@ class chloroform:
                                        positions[1] - proton_int_range, positions[1] + proton_int_range))
         else:
             if isreal:
-                positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_real)
+                positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_real,isproton=False)
 
                 print(max(self._data_carbon_freq_domain_real))
 
@@ -636,7 +640,7 @@ class chloroform:
                     integrate_spectrum(self._data_carbon_ppm, self._data_carbon_freq_domain_real,
                                        positions[1] - carbon_int_range, positions[1] + carbon_int_range))
             else:
-                positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_imag)
+                positions, values = find_two_largest_peaks(self._data_carbon_ppm, self._data_carbon_freq_domain_imag,isproton=False)
                 self._data_carbon_peaks_imag = values
                 self._data_carbon_peaks_pos_imag = positions
 

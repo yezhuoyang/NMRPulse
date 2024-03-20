@@ -1,8 +1,11 @@
 import numpy as np
 from scipy.signal import find_peaks
 
+
 def all_close(matrix1, matrix2):
-    return np.allclose(np.real(matrix1), np.real(matrix2), rtol=1e-8, atol=1e-5) and np.allclose(np.imag(matrix1), np.imag(matrix2), rtol=1e-8, atol=1e-5)
+    return np.allclose(np.real(matrix1), np.real(matrix2), rtol=1e-8, atol=1e-5) and np.allclose(np.imag(matrix1),
+                                                                                                 np.imag(matrix2),
+                                                                                                 rtol=1e-8, atol=1e-5)
 
 
 def hilbert_schmidt_distance(V: np.ndarray, U: np.ndarray):
@@ -15,6 +18,7 @@ def norm_2_distance(matrix1: np.ndarray, matrix2: np.ndarray):
     return np.abs(np.sum((matrix1 - matrix2) ** 2))
 
 
+'''
 def find_two_largest_peaks(x, y):
     # Convert to numpy arrays for processing
     x = np.array(x)
@@ -48,6 +52,45 @@ def find_two_largest_peaks(x, y):
     peak_values = y[largest_peaks_indices]
 
     return list(peak_positions), list(peak_values)
+'''
+
+local_proton_int_range = 0.8
+local_proton_center_left = 5.9
+local_proton_center_right = 9.2
+local_carbon_int_range = 3
+local_carbon_center_left = 66.444
+local_carbon_center_right = 80.180
+
+
+def find_two_largest_peaks(x, y, isproton=True):
+    x = np.array(x)
+    y = np.array(y)
+
+    if isproton:
+        proton_center_right = local_proton_center_right
+        proton_center_left = local_proton_center_left
+        proton_int_range = local_proton_int_range
+    else:
+        proton_center_right = local_carbon_center_right
+        proton_center_left = local_carbon_center_left
+        proton_int_range = local_carbon_int_range
+
+    # Function to find the index of the closest point in x to a given value
+    def find_closest_index(array, value):
+        return np.argmin(np.abs(array - value))
+
+    # Find the closest point to proton_center_left
+    closest_left_index = find_closest_index(x, proton_center_left)
+    closest_left_point = x[closest_left_index]
+    closest_left_value = y[closest_left_index]
+
+    # Find the closest point to proton_center_right
+    closest_right_index = find_closest_index(x, proton_center_right)
+    closest_right_point = x[closest_right_index]
+    closest_right_value = y[closest_right_index]
+
+    # Return the positions and values of the closest points
+    return [closest_left_point, closest_right_point], [closest_left_value, closest_right_value]
 
 
 def store_string_to_file(output_string, file_path):
@@ -59,7 +102,6 @@ def store_string_to_file(output_string, file_path):
     """
     with open(file_path, 'w') as file:
         file.write(output_string)
-
 
 
 if __name__ == "__main__":
