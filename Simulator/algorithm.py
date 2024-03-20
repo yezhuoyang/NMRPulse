@@ -67,7 +67,7 @@ class NMRalgorithm:
 
     def add_CNOT_pulse(self):
         self.NMRsample.add_pulse(BarrierPulse(name="CNOT(H,C)"))
-        self.NMRsample.add_CNOT_pulse(approximate=True, Hcontrol=True)
+        self.NMRsample.add_CNOT_pulse(approximate=False, Hcontrol=True)
         self.NMRsample.add_pulse(BarrierPulse(name="CNOT(H,C)", endpulse=True))
 
     def plot_measure_all(self):
